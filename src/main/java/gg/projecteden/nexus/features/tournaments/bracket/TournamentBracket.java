@@ -1,27 +1,21 @@
-package gg.projecteden.nexus.features.tournament.models;
+package gg.projecteden.nexus.features.tournaments.bracket;
 
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Display.Billboard;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.TextDisplay.TextAlignment;
 import tech.blastmc.holograms.api.HologramsAPI;
 import tech.blastmc.holograms.api.models.Hologram;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,7 +28,7 @@ import java.util.UUID;
 @SuppressWarnings("deprecation")
 @Data
 @NoArgsConstructor
-public class Tournament {
+public class TournamentBracket {
 	String id;
 	Location origin;
 	private int winningPoint = 1;
@@ -52,7 +46,7 @@ public class Tournament {
 	private boolean finished = false;
 	private UUID championUUID;
 
-	public Tournament(@NonNull String id, Location location) {
+	public TournamentBracket(@NonNull String id, Location location) {
 		this.id = id;
 		this.origin = location;
 	}

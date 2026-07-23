@@ -1,11 +1,9 @@
-package gg.projecteden.nexus.features.tournament;
+package gg.projecteden.nexus.features.tournaments.bracket;
 
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.nexus.features.tournament.models.Tournament;
-import gg.projecteden.nexus.features.tournament.models.Tournament.Match;
+import gg.projecteden.nexus.features.tournaments.bracket.TournamentBracket.Match;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -13,21 +11,20 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import org.bukkit.OfflinePlayer;
 
-@Aliases("tourny")
 @Permission(Group.SENIOR_STAFF)
 @Environments(Env.UPDATE)
-public class TournamentCommand extends CustomCommand {
+public class TournamentBracketCommand extends CustomCommand {
 
-	private static Tournament tournament = null;
+	private static TournamentBracket tournamentBracket = null;
 
-	public TournamentCommand(CommandEvent event) {
+	public TournamentBracketCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path("create <id>")
 	void create(String id) {
-		tournament = new Tournament(id, location().subtract(0, 1, 0).toCenterLocation());
-		send("&3Created new Tournament: &e" + tournament.getId());
+		tournamentBracket = new TournamentBracket(id, location().subtract(0, 1, 0).toCenterLocation());
+		send("&3Created new Tournament: &e" + tournamentBracket.getId());
 	}
 
 	@Path("add <player>")
@@ -35,11 +32,11 @@ public class TournamentCommand extends CustomCommand {
 		checkStarted();
 		checkFinished();
 
-		if (tournament.getPlayerUUIDs().contains(player.getUniqueId()))
+		if (tournamentBracket.getPlayerUUIDs().contains(player.getUniqueId()))
 			error("This player is already in the tournament");
 
-		tournament.addPlayer(player);
-		send("&3Added &e" + Nickname.of(player) + " &3to tournament: &e" + tournament.getId());
+		tournamentBracket.addPlayer(player);
+		send("&3Added &e" + Nickname.of(player) + " &3to tournament: &e" + tournamentBracket.getId());
 	}
 
 	@Path("remove <player>")
@@ -47,11 +44,11 @@ public class TournamentCommand extends CustomCommand {
 		checkStarted();
 		checkFinished();
 
-		if (!tournament.getPlayerUUIDs().contains(player.getUniqueId()))
+		if (!tournamentBracket.getPlayerUUIDs().contains(player.getUniqueId()))
 			error("This player is not in the tournament");
 
-		tournament.removePlayer(player);
-		send("&3Removed &e" + Nickname.of(player) + " &3from tournament: &e" + tournament.getId());
+		tournamentBracket.removePlayer(player);
+		send("&3Removed &e" + Nickname.of(player) + " &3from tournament: &e" + tournamentBracket.getId());
 	}
 
 	@Path("start")
@@ -59,8 +56,8 @@ public class TournamentCommand extends CustomCommand {
 		checkStarted();
 		checkFinished();
 
-		tournament.start();
-		send("&3Started tournament: &e" + tournament.getId());
+		tournamentBracket.start();
+		send("&3Started tournament: &e" + tournamentBracket.getId());
 	}
 
 	@Path("getCurrentMatch")
@@ -68,7 +65,7 @@ public class TournamentCommand extends CustomCommand {
 		checkNotStarted();
 		checkFinished();
 
-		Match match = tournament.getCurrentMatch();
+		Match match = tournamentBracket.getCurrentMatch();
 		send("&3Current match:");
 		send(match.getDisplay());
 	}
@@ -78,7 +75,7 @@ public class TournamentCommand extends CustomCommand {
 		checkStarted();
 		checkFinished();
 
-		tournament.setWinningPoint(winningPoint);
+		tournamentBracket.setWinningPoint(winningPoint);
 		send("&3Set winning point to &e" + winningPoint);
 	}
 
@@ -87,29 +84,29 @@ public class TournamentCommand extends CustomCommand {
 		checkNotStarted();
 		checkFinished();
 
-		tournament.addPoint(player.getUniqueId());
+		tournamentBracket.addPoint(player.getUniqueId());
 
-		if (tournament.isFinished())
-			send("&3Tournament champion: &e" + Nickname.of(tournament.getChampionUUID()));
+		if (tournamentBracket.isFinished())
+			send("&3Tournament champion: &e" + Nickname.of(tournamentBracket.getChampionUUID()));
 	}
 
 	@Path("setXSpace <value>")
 	void setXSpace(int value) {
-		tournament.setX_SPACE(value);
+		tournamentBracket.setX_SPACE(value);
 		send("&3Set X_SPACE to &e" + value);
 	}
 
 	@Path("setYSpace <value>")
 	void setYSpace(int value) {
-		tournament.setY_SPACE(value);
+		tournamentBracket.setY_SPACE(value);
 		send("&3Set Y_SPACE to &e" + value);
 	}
 
 	@Path("delete")
 	void delete() {
-		send("&3Deleted Tournament: &e" + tournament.getId());
-		tournament.delete();
-		tournament = null;
+		send("&3Deleted Tournament: &e" + tournamentBracket.getId());
+		tournamentBracket.delete();
+		tournamentBracket = null;
 	}
 
 	//
@@ -157,17 +154,17 @@ public class TournamentCommand extends CustomCommand {
 	//
 
 	private void checkNotStarted() {
-		if (!tournament.isStarted())
+		if (!tournamentBracket.isStarted())
 			error("Tournament not started");
 	}
 
 	private void checkStarted() {
-		if (tournament.isStarted())
+		if (tournamentBracket.isStarted())
 			error("Tournament already started");
 	}
 
 	private void checkFinished() {
-		if (tournament.isFinished())
+		if (tournamentBracket.isFinished())
 			error("Tournament has finished");
 	}
 }

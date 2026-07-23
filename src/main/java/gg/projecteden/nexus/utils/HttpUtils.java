@@ -141,7 +141,13 @@ public class HttpUtils {
 
 	@SneakyThrows
 	public static String get(String url) {
+		return get(url, Headers.of());
+	}
+
+	@SneakyThrows
+	public static String get(String url, Headers headers) {
 		final Request request = createRequest(url)
+			.headers(headers)
 			.get()
 			.build();
 
