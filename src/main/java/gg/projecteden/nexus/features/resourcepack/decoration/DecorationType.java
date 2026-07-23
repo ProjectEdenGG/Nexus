@@ -326,7 +326,7 @@ public enum DecorationType {
 	PRESENT_TALL_RED(new Present(PresentType.TALL_RED)),
 
 	@TypeConfig(money = 450, theme = Theme.HOLIDAY)
-	SANTAS_CHAIR(new DyeableChair(false, true, "Santa's Chair", ItemModelType.SANTAS_CHAIR, ColorableType.DYE, HitboxSingle._1x1_BARRIER, 1.2)),
+	SANTAS_CHAIR(new DyeableChair(false, false, "Santa's Chair", ItemModelType.SANTAS_CHAIR, ColorableType.DYE, HitboxSingle._1x1_BARRIER, 1.2)),
 
 	@TypeConfig(money = 450, theme = Theme.HOLIDAY)
 	SANTAS_TABLE(new FloorThing(true, "Santa's Table", ItemModelType.SANTAS_TABLE, HitboxUnique.SANTAS_TABLE)),
