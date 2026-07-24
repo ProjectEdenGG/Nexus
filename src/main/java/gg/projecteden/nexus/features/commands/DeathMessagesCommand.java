@@ -33,6 +33,7 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -59,6 +60,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -358,10 +360,10 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 		if (entity != null) {
 			// get mcMMO's saved entity name
-			if (entity.hasMetadata(MetadataConstants.METADATA_KEY_CUSTOM_NAME)) {
-				String name = entity.getMetadata(MetadataConstants.METADATA_KEY_CUSTOM_NAME).get(0).asString();
-				if (!name.isEmpty())
-					finalComponent = new JsonBuilder().content(name).hover(HoverEvent.showEntity(hover.type(), hover.id(), finalComponent)).build();
+			if (entity.hasMetadata(MetadataConstants.METADATA_KEY_HEALTHBAR_SNAPSHOT)) {
+				HealthbarSnapshot name = (HealthbarSnapshot) entity.getMetadata(MetadataConstants.METADATA_KEY_HEALTHBAR_SNAPSHOT).getFirst().value();
+				if (name != null && !Nullables.isNullOrEmpty(name.previousCustomName()))
+					finalComponent = new JsonBuilder().content(name.previousCustomName()).hover(HoverEvent.showEntity(hover.type(), hover.id(), finalComponent)).build();
 			}
 
 			// if that failed or was empty, get a translatable text component instead
@@ -370,6 +372,8 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		}
 		return finalComponent;
 	}
+
+	public record HealthbarSnapshot(@Nullable String previousCustomName, boolean previousNameVisible, long lastHitMs) { }
 
 	// display player (nick)names + colors
 	@NotNull

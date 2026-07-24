@@ -117,7 +117,7 @@ dependencies {
         exclude("org.spigotmc", "spigot-api")
         exclude("org.spigotmc", "spigot")
     }
-    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.2.040@jar") {
+    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.3.001-SNAPSHOT@jar") {
         exclude("com.sk89q.worldedit", "worldedit-core")
         exclude("com.sk89q.worldedit.worldedit-libs", "core")
     }
