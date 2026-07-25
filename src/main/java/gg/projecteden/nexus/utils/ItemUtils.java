@@ -719,12 +719,7 @@ public class ItemUtils {
 
 		net.minecraft.world.item.ItemStack handle = CraftItemStack.asNMSCopy(mainItem);
 		CustomData customData = handle.get(DataComponents.CUSTOM_DATA);
-		if (customData == null) {
-			Nexus.warn("Custom data component on " + mainItem.getType() + " is null");
-			return mainItem;
-		}
-
-		CompoundTag tag = customData.copyTag();
+		CompoundTag tag = customData == null ? new CompoundTag() : customData.copyTag();
 
 		try (final ProblemReporter.ScopedCollector problemReporter = new ProblemReporter.ScopedCollector(
 			() -> "ContainerHelper#saveAllItems", LogUtils.getLogger()

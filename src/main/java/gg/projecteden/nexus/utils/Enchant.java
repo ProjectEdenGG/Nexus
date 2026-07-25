@@ -3,11 +3,13 @@ package gg.projecteden.nexus.utils;
 import com.google.common.base.Preconditions;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.BarrageEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.BeheadingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.BountyEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ColumnQuakeEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.DemeterEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.DoubleTapEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.EnergizingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.FlockShearEnchant;
@@ -15,14 +17,19 @@ import gg.projecteden.nexus.features.customenchants.enchants.FrostAspectEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GearsEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GracefulStepEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.GroundPoundEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.MidasCarrotsEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.OrbseekerEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.OverchargeEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.PloughEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.PropulsionEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.RicochetEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SpringsEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ThorEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.TunnelingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.UndertowEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.VeinMinerEnchant;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Unreleased;
@@ -249,6 +256,34 @@ public class Enchant {
 	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment FLOCK_SHEAR = CustomEnchants.get(FlockShearEnchant.class);
+
+	// TODO: DESCRIBE
+	@Unreleased
+	public static final Enchantment BARRAGE = CustomEnchants.get(BarrageEnchant.class);
+
+	// TODO: DESCRIBE
+	@Unreleased
+	public static final Enchantment OVERCHARGE = CustomEnchants.get(OverchargeEnchant.class);
+
+	// TODO: DESCRIBE
+	@Unreleased
+	public static final Enchantment DOUBLE_TAP = CustomEnchants.get(DoubleTapEnchant.class);
+
+	// TODO: DESCRIBE
+	@Unreleased
+	public static final Enchantment RICOCHET = CustomEnchants.get(RicochetEnchant.class);
+
+	// TODO: DESCRIBE
+	@Unreleased
+	public static final Enchantment PROPULSION = CustomEnchants.get(PropulsionEnchant.class);
+
+	// TODO: DESCRIBE
+	@Unreleased
+	public static final Enchantment GROUND_POUND = CustomEnchants.get(GroundPoundEnchant.class);
+
+	// TODO: DESCRIBE
+	@Unreleased
+	public static final Enchantment UNDERTOW = CustomEnchants.get(UndertowEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 

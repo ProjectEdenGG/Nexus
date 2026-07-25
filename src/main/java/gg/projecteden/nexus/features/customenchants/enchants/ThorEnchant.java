@@ -2,8 +2,10 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.entity.Trident;
@@ -13,7 +15,14 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class ThorEnchant extends CustomEnchant implements Listener {
+
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.AXES.append(Material.TRIDENT).append(Material.MACE).getValues().stream().toList();
+	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
