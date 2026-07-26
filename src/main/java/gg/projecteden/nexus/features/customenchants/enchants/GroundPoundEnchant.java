@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -245,11 +246,18 @@ public class GroundPoundEnchant extends CustomEnchant implements Listener {
 
 			AtomicInteger taskId = new AtomicInteger();
 			taskId.set(Tasks.repeat(1, 1, () -> {
-				if (fallingBlock.getY() <= block.getY()) {
+				if (fallingBlock.getY() <= block.getY() || fallingBlock.isDead()) {
 					fallingBlock.remove();
 					Tasks.cancel(taskId.get());
 				}
 			}));
+
+			// Fallback just in case...
+			Tasks.wait(TickTime.SECOND.x(5), () -> {
+				Tasks.cancel(taskId.get());
+				if (fallingBlock != null)
+					fallingBlock.remove();
+			});
 		}
 	}
 
