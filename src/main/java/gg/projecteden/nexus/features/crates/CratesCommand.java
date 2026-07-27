@@ -134,7 +134,7 @@ public class CratesCommand extends CustomCommand implements Listener {
 		Entity entity = Bukkit.getEntity(uuid.getUuid());
 		if (entity == null)
 			error("Invalid entity");
-		CrateHandler.reset(entity);
+		CrateHandler.get().reset(entity);
 		send(PREFIX + "Reset " + uuid.getUuid());
 	}
 
@@ -208,7 +208,7 @@ public class CratesCommand extends CustomCommand implements Listener {
 				};
 				return location.getWorld().dropItem(location, new ItemStack(Material.STONE), itemConsumer::accept);
 			} catch (CrateOpeningException ex) {
-				CrateHandler.reset(armorStand);
+				CrateHandler.get().reset(armorStand);
 				if (ex.getMessage() != null)
 					send(player(), Crates.PREFIX + ex.getMessage());
 				return null;
@@ -221,8 +221,8 @@ public class CratesCommand extends CustomCommand implements Listener {
 			error("Could not create animation instance");
 
 		try {
-			CrateHandler.ANIMATIONS.put(uuid, animation);
-			animation.play().thenRun(() -> CrateHandler.ANIMATIONS.remove(uuid));
+			CrateHandler.get().ANIMATIONS.put(uuid, animation);
+			animation.play().thenRun(() -> CrateHandler.get().ANIMATIONS.remove(uuid));
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			animation.stop();
@@ -281,7 +281,7 @@ public class CratesCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	@Description("Open a crate")
 	void open(CrateType type, @Arg(context = 1) CrateEntity uuid, @Arg("1") int amount) {
-		CrateHandler.openCrate(type, (ArmorStand) Bukkit.getEntity(uuid.getUuid()), player(), amount, false);
+		CrateHandler.get().openCrate(type, (ArmorStand) Bukkit.getEntity(uuid.getUuid()), player(), amount, false, null);
 	}
 
 	@Path("pinata <player> <type> [amount]")

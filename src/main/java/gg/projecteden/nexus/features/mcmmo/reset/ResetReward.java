@@ -4,7 +4,7 @@ import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetShopMenu.SkillTokenFilterType;
 import gg.projecteden.nexus.features.mcmmo.reset.annotations.Cost;
 import gg.projecteden.nexus.features.mcmmo.reset.annotations.Reward;
-import gg.projecteden.nexus.features.survival.gem.GemCommand;
+import gg.projecteden.nexus.features.crates.gemcrafter.GemCommand;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser.SkillTokenType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;

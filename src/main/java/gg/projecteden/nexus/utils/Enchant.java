@@ -170,6 +170,15 @@ public class Enchant {
 	// Launches the player horizontally when using a jab attack
 	public static final Enchantment LUNGE = getEnchantment("lunge");
 
+	// Increase damage dealt per block fallen
+	public static final Enchantment DENSITY = getEnchantment("density");
+
+	// Bypasses some armor damage reduction
+	public static final Enchantment BREACH = getEnchantment("breach");
+
+	// Launches player up after successful attack
+	public static final Enchantment WIND_BURST = getEnchantment("wind_burst");
+
 	// Keep item on death
 	@Unreleased
 	public static final Enchantment SOULBOUND = CustomEnchants.get(SoulboundEnchant.class);

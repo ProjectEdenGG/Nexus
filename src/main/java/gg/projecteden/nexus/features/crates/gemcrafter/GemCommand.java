@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.survival.gem;
+package gg.projecteden.nexus.features.crates.gemcrafter;
 
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -96,7 +96,7 @@ public class GemCommand extends CustomCommand implements Listener {
 		if (isGem(tool)) { // Gem combining
 			Enchantment gemEnchant = tool.getEnchantments().entrySet().stream().findFirst().get().getKey();
 			if (gemEnchant != enchantment) {
-				PlayerUtils.send(player, "&cYou cannot combine gems of seperate types");
+				PlayerUtils.send(player, "&cYou cannot combine gems of separate types");
 				return;
 			}
 			if (level != tool.getEnchantmentLevel(enchantment)) {

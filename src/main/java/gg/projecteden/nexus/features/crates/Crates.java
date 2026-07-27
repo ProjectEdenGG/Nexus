@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.crates;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.crates.gemcrafter.GemCrafterHandler;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCs;
@@ -77,14 +78,13 @@ public class Crates extends Feature implements Listener {
 			if (Nexus.isMaintenanceQueued())
 				throw new CrateOpeningException("Server maintenance is queued, cannot open crates");
 
-			if (Crates.getLootByType(crateType).stream().noneMatch(CrateLoot::isActive) && crateType != CrateType.MINIGAMES)
+			if (crateType == CrateType.GEM_CRAFTER)
+				GemCrafterHandler.get().handle(armorStand, event.getPlayer());
+			else if (Crates.getLootByType(crateType).stream().noneMatch(CrateLoot::isActive) && crateType != CrateType.MINIGAMES)
 				throw new CrateOpeningException("&3Coming soon!");
 			else
 				new CratePreviewProvider(crateType, null, armorStand).open(event.getPlayer());
 
-//			else {
-//
-//			}
 		} catch (NexusException ex) {
 			PlayerUtils.send(event.getPlayer(), ex.withPrefix(Crates.PREFIX));
 		}

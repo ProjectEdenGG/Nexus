@@ -302,7 +302,7 @@ public class CratePinatas implements Listener {
 			if (rollsLeft-- <= 0)
 				return;
 
-			CrateConfig.CrateLoot loot = CrateHandler.pickCrateLoot(type, player);
+			CrateConfig.CrateLoot loot = CrateHandler.get().pickCrateLoot(type, player, null);
 			loots.add(loot);
 			ItemStack item = new ItemBuilder(loot.getDisplayItem()).setting(ItemSetting.STORABLE, false).build();
 
@@ -367,7 +367,7 @@ public class CratePinatas implements Listener {
 		}
 
 		private void stop() {
-			loots.forEach(loot -> CrateHandler.giveItems(player, loot));
+			loots.forEach(loot -> CrateHandler.get().giveItems(player, loot));
 			items.forEach(Entity::remove);
 			Tasks.cancel(rewardsTask);
 			Tasks.cancel(rotateTask);

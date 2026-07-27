@@ -68,8 +68,6 @@ public class CratePreviewProvider extends InventoryProvider {
 				contents.set(48 + i, ClickableItem.of(new ItemBuilder(i == 1 ? ItemModelType.GUI_BACK : ItemModelType.INVISIBLE).name("&cBack").build(), back));
 		}
 
-		Pagination page = contents.pagination();
-
 		List<ClickableItem> items = new ArrayList<>();
 
 		if (type == CrateType.MINIGAMES) {
@@ -153,16 +151,16 @@ public class CratePreviewProvider extends InventoryProvider {
 					close();
 
 					try {
-						if (CrateHandler.isInUse(clickedCrate)) {
+						if (CrateHandler.get().isInUse(clickedCrate)) {
 							PlayerUtils.send(viewer, Crates.PREFIX + "That crate is already being used");
 							voter.givePoints(2);
 							voterService.save(voter);
 							return;
 						}
-						CrateHandler.openCrate(type, clickedCrate, viewer, 1, false);
+						CrateHandler.get().openCrate(type, clickedCrate, viewer, 1, false, null);
 					} catch (Exception ex) {
 						MenuUtils.handleException(viewer, Crates.PREFIX, ex);
-						CrateHandler.reset(clickedCrate);
+						CrateHandler.get().reset(clickedCrate);
 						if (ex instanceof CrateOpeningException) {
 							voter.givePoints(2);
 							voterService.save(voter);
@@ -183,16 +181,16 @@ public class CratePreviewProvider extends InventoryProvider {
 					close();
 
 					try {
-						if (CrateHandler.isInUse(clickedCrate)) {
+						if (CrateHandler.get().isInUse(clickedCrate)) {
 							PlayerUtils.send(viewer, Crates.PREFIX + "That crate is already being used");
 							perkOwner.giveTokens(50);
 							perkService.save(perkOwner);
 							return;
 						}
-						CrateHandler.openCrate(type, clickedCrate, viewer, 1, false);
+						CrateHandler.get().openCrate(type, clickedCrate, viewer, 1, false, null);
 					} catch (Exception ex) {
 						MenuUtils.handleException(viewer, Crates.PREFIX, ex);
-						CrateHandler.reset(clickedCrate);
+						CrateHandler.get().reset(clickedCrate);
 						if (ex instanceof CrateOpeningException) {
 							perkOwner.giveTokens(50);
 							perkService.save(perkOwner);
@@ -216,20 +214,20 @@ public class CratePreviewProvider extends InventoryProvider {
 						.title("Open " + keys + " keys?")
 						.onConfirm(e2 -> {
 							try {
-								CrateHandler.openCrate(type, clickedCrate, viewer, keys, true);
+								CrateHandler.get().openCrate(type, clickedCrate, viewer, keys, true, null);
 							} catch (Exception ex) {
 								MenuUtils.handleException(viewer, Crates.PREFIX, ex);
-								CrateHandler.reset(clickedCrate);
+								CrateHandler.get().reset(clickedCrate);
 							}
 						})
 						.open(viewer);
 				else {
-					CrateHandler.openCrate(type, clickedCrate, viewer, 1, true);
+					CrateHandler.get().openCrate(type, clickedCrate, viewer, 1, true, null);
 					close();
 				}
 			} catch (Exception ex) {
 				MenuUtils.handleException(viewer, Crates.PREFIX, ex);
-				CrateHandler.reset(clickedCrate);
+				CrateHandler.get().reset(clickedCrate);
 			}
 		};
 	}

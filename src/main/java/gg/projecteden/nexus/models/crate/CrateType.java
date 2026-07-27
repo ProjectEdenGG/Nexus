@@ -57,6 +57,14 @@ public enum CrateType {
 	@KeyModel(ItemModelType.CRATE_KEY_HALLOWEEN)
 	@TitleCharacter("灿")
 	HALLOWEEN,
+
+	@CustomKeys
+	GEM_CRAFTER {
+		@Override
+		public void handleItem(Item item) {
+			Tasks.wait(10, () -> item.setCustomNameVisible(true));
+		}
+	},
 	;
 
 	final ItemStack OLD_KEY = new ItemBuilder(Material.TRIPWIRE_HOOK)
@@ -73,6 +81,9 @@ public enum CrateType {
 	}
 
 	public ItemStack getKey() {
+		if (getField().isAnnotationPresent(CustomKeys.class))
+			return null;
+
 		ItemModelType keyItemModel = getKeyItemModel();
 
 		if (keyItemModel == null)
@@ -183,6 +194,10 @@ public enum CrateType {
 	public @interface KeyModel {
 		ItemModelType value();
 	}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface CustomKeys { }
 
 	@Target(ElementType.FIELD)
 	@Retention(RetentionPolicy.RUNTIME)

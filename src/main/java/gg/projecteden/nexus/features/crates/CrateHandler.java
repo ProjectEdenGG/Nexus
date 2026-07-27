@@ -30,6 +30,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -46,14 +47,22 @@ import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 
 @Data
-public class  CrateHandler {
+public class CrateHandler {
 
-	public static final Map<UUID, CrateAnimation> ANIMATIONS = new HashMap<>();
+	public final Map<UUID, CrateAnimation> ANIMATIONS = new HashMap<>();
 
-	public static void openCrate(CrateType type, ArmorStand entity, Player player, int amount, boolean useKey) {
+	private static CrateHandler instance;
+
+	public static CrateHandler get() {
+		if (instance == null)
+			instance = new CrateHandler();
+		return instance;
+	}
+
+	public void openCrate(CrateType type, ArmorStand entity, Player player, int amount, boolean useKey, @Nullable ItemStack key) {
 		if (isInUse(entity)) return;
 
-		CrateLoot loot = pickCrateLoot(type, player);
+		CrateLoot loot = pickCrateLoot(type, player, key);
 		if (loot == null) {
 			if (type == CrateType.MINIGAMES)
 				throw new CrateOpeningException("You already own all minigame collectibles");
@@ -79,10 +88,10 @@ public class  CrateHandler {
 					while (amountRemaining.getAndDecrement() > 0) {
 						if (!player.isOnline())
 							break;
-						CrateLoot _loot = pickCrateLoot(type, player);
+						CrateLoot _loot = pickCrateLoot(type, player, null);
 						if (!canHoldItems(player, _loot))
 							break;
-						takeKey(type, player, useKey);
+						takeKey(type, player, useKey, null);
 						recap.add(_loot);
 						giveItems(player, _loot);
 					}
@@ -95,7 +104,7 @@ public class  CrateHandler {
 					return location.getWorld().dropItem(location, itemstack, itemConsumer::accept);
 				} catch (Exception ex) {
 					MenuUtils.handleException(player, Crates.PREFIX, ex);
-					CrateHandler.reset(entity);
+					reset(entity);
 					return null;
 				}
 			};
@@ -115,7 +124,7 @@ public class  CrateHandler {
 
 		try {
 			ANIMATIONS.put(entity.getUniqueId(), animation);
-			takeKey(type, player, useKey);
+			takeKey(type, player, useKey, key);
 			animation.play().thenRun(() -> {
 				ANIMATIONS.remove(entity.getUniqueId());
 
@@ -124,17 +133,17 @@ public class  CrateHandler {
 			});
 		} catch (Exception ex) {
 			MenuUtils.handleException(player, Crates.PREFIX, ex);
-			CrateHandler.reset(entity);
+			reset(entity);
 		}
 	}
 
-	public static boolean isInUse(Entity entity) {
+	public boolean isInUse(Entity entity) {
 		if (!ANIMATIONS.containsKey(entity.getUniqueId()))
 			return false;
 		return ANIMATIONS.get(entity.getUniqueId()).isActive();
 	}
 
-	private static boolean canHoldItems(Player player, CrateLoot loot) {
+	private boolean canHoldItems(Player player, CrateLoot loot) {
 		if (!PlayerUtils.hasRoomFor(player, loot.getItems())) {
 			PlayerUtils.send(player, Crates.PREFIX + "Please clear room in your inventory before continuing to open crates");
 			return false;
@@ -142,7 +151,7 @@ public class  CrateHandler {
 		return true;
 	}
 
-	public static CrateLoot pickCrateLoot(CrateType type, Player player) {
+	public CrateLoot pickCrateLoot(CrateType type, Player player, @Nullable ItemStack unused /*Used for subclass*/) {
 		if (type == CrateType.MINIGAMES)
 			return pickMinigameLoot(player);
 		Map<CrateLoot, Double> original = new HashMap<>();
@@ -156,7 +165,7 @@ public class  CrateHandler {
 		return RandomUtils.getWeightedRandom(original);
 	}
 
-	private static CrateLoot pickMinigameLoot(Player player) {
+	private CrateLoot pickMinigameLoot(Player player) {
 		PerkOwnerService service = new PerkOwnerService();
 		PerkOwner perkOwner = service.get(player);
 
@@ -208,12 +217,14 @@ public class  CrateHandler {
 		}
 	}
 
-	private static void takeKey(CrateType type, Player player, boolean useKey) {
+	private void takeKey(CrateType type, Player player, boolean useKey, ItemStack keyOverride) {
 		if (!useKey)
 			return;
 		try {
 			boolean took = false;
 			ItemStack key = type.getKey();
+			if (keyOverride != null)
+				key = keyOverride;
 			for (ItemStack item : player.getInventory().getContents()) {
 				if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(item)) continue;
 				if (ItemUtils.isFuzzyMatch(key, item)) {
@@ -228,7 +239,7 @@ public class  CrateHandler {
 		}
 	}
 
-	public static void reset(Entity entity) {
+	public void reset(Entity entity) {
 		CrateAnimation animation = ANIMATIONS.get(entity.getUniqueId());
 		if (animation == null)
 			return;

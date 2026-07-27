@@ -198,7 +198,7 @@ public class Reloader {
 				throw new InvalidInputException(new JsonBuilder("There are " + count + " virtual inventories open").command("/nexus invs").hover("&eClick to view"));
 		}),
 		CRATES(() -> {
-			for (CrateAnimation animation : CrateHandler.ANIMATIONS.values())
+			for (CrateAnimation animation : CrateHandler.get().ANIMATIONS.values())
 				if (animation.isActive())
 					throw new InvalidInputException("Someone is opening a crate");
 		}),
