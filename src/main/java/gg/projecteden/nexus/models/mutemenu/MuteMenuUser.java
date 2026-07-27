@@ -56,6 +56,8 @@ public class MuteMenuUser implements PlayerOwnedObject {
 
 		if (item == MuteMenuItem.NEXUS_RELOAD)
 			return !new NerdService().get(this).isReloadNotify();
+		else if (item == MuteMenuItem.DEPLOYMENTS)
+			return !new NerdService().get(this).isDeployNotify();
 		else if (item.name().startsWith("CHANNEL_"))
 			return !new ChatterService().get(uuid).hasJoined(StaticChannel.valueOf(item.name().replace("CHANNEL_", "")).getChannel());
 		else

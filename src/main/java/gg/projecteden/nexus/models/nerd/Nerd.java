@@ -80,6 +80,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 
 	private boolean nightVision;
 	private boolean reloadNotify = true;
+	private boolean deployNotify = true;
 
 	private Set<WorldGroup> visitedWorldGroups = new HashSet<>();
 	private Set<SubWorldGroup> visitedSubWorldGroups = new HashSet<>();

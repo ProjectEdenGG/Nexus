@@ -12,11 +12,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgn
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.BossBarBuilder;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -26,6 +27,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -42,6 +44,7 @@ public class DeployCommand extends CustomCommand implements Listener {
 
 	static int duplicateTaskId;
 	static final BossBar deployingBar = new BossBarBuilder().color(ColorType.PINK).title("&3Incoming Deploy").build();
+	static final NerdService nerdService = new NerdService();
 
 	public DeployCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -49,7 +52,7 @@ public class DeployCommand extends CustomCommand implements Listener {
 
 	@Override
 	public void _shutdown() {
-		Dev.getOnlineStaff().forEach(deployingBar::removeViewer);
+		getUsersToShowTo().forEach(deployingBar::removeViewer);
 	}
 
 	@Path("create <id> <name> <player>")
@@ -64,10 +67,10 @@ public class DeployCommand extends CustomCommand implements Listener {
 
 		if (Deployment.currentDeployments.size() > 1)
 			deployingBar.name(new JsonBuilder("&3Incoming Deploys (&e%d&3)".formatted(Deployment.currentDeployments.size())));
-		Dev.getOnlineStaff().forEach(_dev -> deployingBar.addViewer(_dev.getPlayer()));
+		getUsersToShowTo().forEach(_dev -> deployingBar.addViewer(_dev.getPlayer()));
 
 		generateBossBar(deployment);
-		Dev.getOnlineStaff().forEach(_dev -> {
+		getUsersToShowTo().forEach(_dev -> {
 			deployment.getBossBar().addViewer(_dev.getPlayer());
 			new SoundBuilder(CustomSound.NOTE_MARIMBA).location(dev.getLocation()).pitch(.6).volume(.3).receiver(dev).play();
 		});
@@ -115,14 +118,18 @@ public class DeployCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	private List<Player> getUsersToShowTo() {
+		return OnlinePlayers.staff().filter(staff -> nerdService.get(staff).isDeployNotify()).get();
+	}
+
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		PlayerUtils.Dev dev = PlayerUtils.Dev.of(event.getPlayer());
-		if (dev == null)
-			return;
-		if (!dev.getRank().isStaff())
+		Player dev = event.getPlayer();
+		if (!Rank.of(dev).isStaff())
 			return;
 		if (Deployment.currentDeployments.isEmpty())
+			return;
+		if (!nerdService.get(dev).isDeployNotify())
 			return;
 
 		deployingBar.addViewer(dev.getPlayer());
@@ -134,13 +141,13 @@ public class DeployCommand extends CustomCommand implements Listener {
 	public void removeNoConsole(Deployment deployment) {
 		Deployment.currentDeployments.removeIf(deploy -> deploy.getUuid().equals(deployment.getUuid()));
 
-		Dev.getOnlineStaff().forEach(_dev -> deployment.getBossBar().removeViewer(_dev));
+		getUsersToShowTo().forEach(_dev -> deployment.getBossBar().removeViewer(_dev));
 
 		if (Deployment.getByPlugin(deployment.plugin).size() <= 1)
 			stopDuplicateError();
 
 		if (Deployment.currentDeployments.isEmpty())
-			Dev.getOnlineStaff().forEach(deployingBar::removeViewer);
+			getUsersToShowTo().forEach(deployingBar::removeViewer);
 		else if (Deployment.getByPlugin(deployment.plugin).size() > 1)
 			deployingBar.name(new JsonBuilder("&3Incoming Deploys (&e%d&3) &e| &cDUPLICATES".formatted(Deployment.currentDeployments.size())));
 		else if (Deployment.currentDeployments.size() > 1)
@@ -153,7 +160,7 @@ public class DeployCommand extends CustomCommand implements Listener {
 		if (duplicateTaskId > 0)
 			Tasks.cancel(duplicateTaskId);
 		duplicateTaskId = Tasks.repeat(0, 4, () ->
-			Dev.getOnlineStaff().forEach(dev ->
+			getUsersToShowTo().forEach(dev ->
 				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_HARP).location(dev.getLocation()).pitch(1.8).volume(2).receiver(dev).play()));
 	}
 

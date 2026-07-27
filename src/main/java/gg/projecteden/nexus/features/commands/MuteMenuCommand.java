@@ -252,6 +252,8 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			Player player = user.getOnlinePlayer();
 			if (item == MuteMenuItem.NEXUS_RELOAD)
 				new NerdService().edit(user, nerd -> nerd.setReloadNotify(!nerd.isReloadNotify()));
+			else if (item == MuteMenuItem.DEPLOYMENTS)
+				new NerdService().edit(user, nerd -> nerd.setDeployNotify(!nerd.isDeployNotify()));
 			else if (item.name().startsWith("CHANNEL_"))
 				if (user.hasMuted(item))
 					PlayerUtils.runCommand(player, "ch join " + item.name().replace("CHANNEL_", "").toLowerCase());
@@ -296,6 +298,8 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			MOB_HEAD_DROPS("Mob Head Drops", Material.CREEPER_HEAD),
 			@Permission(Group.STAFF)
 			NEXUS_RELOAD("Nexus Reloads", Material.COMMAND_BLOCK),
+			@Permission(Group.STAFF)
+			DEPLOYMENTS("Plugin Deploys", Material.REPEATING_COMMAND_BLOCK),
 			// Sounds
 			FIRST_JOIN_SOUND("First Join", Material.GOLD_BLOCK, 50),
 			JOIN_QUIT_SOUNDS("Join/Quit", Material.OAK_DOOR, 50),
