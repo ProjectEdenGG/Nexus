@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
+import gg.projecteden.nexus.features.mcmmo.resetnew.McMMOResetItems;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
@@ -41,6 +42,7 @@ import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -526,6 +528,7 @@ public class CustomRecipes extends Feature implements Listener {
 		DecorationType.registerRecipes();
 
 		light();
+		smithingRecipes();
 	}
 
 	private void light() {
@@ -534,6 +537,19 @@ public class CustomRecipes extends Feature implements Listener {
 			return;
 
 		RecipeBuilder.surround(centerItems).with(Material.GLOWSTONE).toMake(Material.LIGHT, 4).register(RecipeType.FUNCTIONAL);
+	}
+
+	private void smithingRecipes() {
+		for (Material chestplate : MaterialTag.ALL_CHESTPLATES.getValues()) {
+			ItemBuilder builder = new ItemBuilder(chestplate).glide(true);
+			NexusRecipe recipe = RecipeBuilder.smithing(builder.build())
+				.base(chestplate)
+				.addition(Material.ELYTRA)
+				.template(McMMOResetItems.ELYTRA_TEMPLATE)
+				.build();
+			recipe.setShowInMenu(false);
+			recipe.register();
+		}
 	}
 
 	@Nullable

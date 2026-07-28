@@ -1106,6 +1106,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder glide(boolean glide) {
+		itemMeta.setGlider(true);
+		return this;
+	}
+
 	// Building //
 
 	@Override

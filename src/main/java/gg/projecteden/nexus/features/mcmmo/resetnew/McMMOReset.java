@@ -1,7 +1,10 @@
 package gg.projecteden.nexus.features.mcmmo.resetnew;
 
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
+import gg.projecteden.nexus.features.crates.gemcrafter.TomeItem.TomeType;
 import gg.projecteden.nexus.features.mcmmo.resetnew.attributes.HeadshotHandler;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.HeliosBow;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.Quiver;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
@@ -25,23 +28,18 @@ public class McMMOReset extends Feature {
 	public void onStart() {
 		// ACROBATICS
 		register(McMMOResetReward.builder().skill(PrimarySkillType.ACROBATICS)
-			.name("Rocket Boots")
-			.description("Boots that allow you to ascend, hover, and descend in the air at the cost of fuel")
-			.item(new ItemStack(Material.GOLDEN_BOOTS) /*TODO*/)
-			.build());
-		register(McMMOResetReward.builder().skill(PrimarySkillType.ACROBATICS)
 			.name("Elytra Template")
-			.description("Allows you to combine an elytra and chestplate into one item")
+			.description("Allows you to combine an elytra and chestplate into one item in a smithing table")
 			.icon(new ItemStack(Material.ELYTRA))
-			.item(null /*TODO*/)
+			.item(McMMOResetItems.ELYTRA_TEMPLATE)
 			.build());
 		register(McMMOResetReward.builder().skill(PrimarySkillType.ACROBATICS)
-			.name("Bouncy Boots")
+			.name("Slime Boots")
 			.description("Boots that allow you to bounce on the ground instead of taking fall damage")
-			.item(new ItemStack(Material.DIAMOND_BOOTS) /*TODO*/)
+			.item(McMMOResetItems.SLIME_BOOTS)
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.ACROBATICS)
-			/*TODO*/
+			.tome(TomeType.BOOTS)
 			.build());
 		register(CustomEnchantReward.builder().skill(PrimarySkillType.ACROBATICS)
 			.enchant(Enchant.GEARS)
@@ -71,23 +69,23 @@ public class McMMOReset extends Feature {
 		register(McMMOResetReward.builder().skill(PrimarySkillType.ARCHERY)
 			.name("Helios Bow")
 			.description("Fires arrows imbued with solar energy, placing a torch at the impact point")
-			.item(new ItemStack(Material.BOW) /*TODO*/)
+			.item(HeliosBow.getItem())
 			.build());
 		register(McMMOResetReward.builder().skill(PrimarySkillType.ARCHERY)
 			.name("Quiver")
 			.description("Stores up to 9 stacks of arrows in a single slot. Bows will pull from this when firing")
-			.item(new ItemStack(Material.ARROW) /*TODO*/)
+			.item(Quiver.get())
 			.build());
 		register(AttributeReward.builder().skill(PrimarySkillType.ARCHERY)
 			.name("Headshots")
-			.description("Unlock the ability to headshot mobs with shots, killing them instantly")
+			.description("Unlock the ability to headshot mobs with shots, dealing double damage")
 			.icon(new ItemStack(Material.ZOMBIE_HEAD))
 			//.checkHook(mcmmo -> mcmmo.canHeadshot()) TODO
 			//.unlockHook(mcmmo -> mcmmo.setCanHeadshot(true)) TODO
 			.handler(HeadshotHandler.class)
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.ARCHERY)
-			/*TODO*/
+			.tome(TomeType.BOWS)
 			.build());
 		register(CustomEnchantReward.builder().skill(PrimarySkillType.ARCHERY)
 			.enchant(Enchant.BARRAGE)
@@ -110,7 +108,7 @@ public class McMMOReset extends Feature {
 			.item(new ItemStack(Material.DIAMOND_AXE)) // TODO
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.AXES)
-			/*TODO*/
+			.tome(TomeType.MELEE)
 			.build());
 		register(CustomEnchantReward.builder().skill(PrimarySkillType.AXES)
 			.enchant(Enchant.BEHEADING)
@@ -132,7 +130,7 @@ public class McMMOReset extends Feature {
 			.icon(new ItemStack(Material.TRIDENT))
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.CROSSBOWS)
-			/*TODO*/
+			.tome(TomeType.CROSSBOWS)
 			.build());
 		register(CustomEnchantReward.builder().skill(PrimarySkillType.CROSSBOWS)
 			.enchant(Enchant.DOUBLE_TAP)
@@ -152,7 +150,7 @@ public class McMMOReset extends Feature {
 			.description("Define excavation zones which stop falling blocks, give rare drops, and collect dug blocks automatically")
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.EXCAVATION)
-			/*TODO*/
+			.tome(TomeType.TOOLS)
 			.build());
 		register(CustomEnchantReward.builder().skill(PrimarySkillType.EXCAVATION)
 			.enchant(Enchant.COLUMN_QUAKE)
@@ -172,8 +170,8 @@ public class McMMOReset extends Feature {
 			.description("This orb can be placed down to drastically increase fishing rates around you (re-usable)")
 			.item(new ItemStack(Material.PLAYER_HEAD)) // TODO
 			.build());
-		register(TomeReward.builder()
-			/*TODO*/
+		register(TomeReward.builder().skill(PrimarySkillType.FISHING)
+			.tome(TomeType.FISHING_RODS)
 			.build());
 
 		// HERBALISM
@@ -210,7 +208,7 @@ public class McMMOReset extends Feature {
 			.icon(new ItemStack(Material.LEAD))
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.MACES)
-			/*TODO*/
+			.tome(TomeType.MACES)
 			.build());
 		register(CustomEnchantReward.builder().skill(PrimarySkillType.MACES)
 			.enchant(Enchant.PROPULSION)
@@ -240,7 +238,7 @@ public class McMMOReset extends Feature {
 			.icon(new ItemStack(Material.STONE))
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.MINING)
-			/*TODO*/
+			.tome(TomeType.TOOLS)
 			.build());
 		register(CustomEnchantReward.builder().skill(PrimarySkillType.MINING)
 			.enchant(Enchant.GLOWING)
@@ -276,7 +274,7 @@ public class McMMOReset extends Feature {
 			/*TODO*/
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.SPEARS)
-			/*TODO*/
+			.tome(TomeType.MELEE)
 			.build());
 
 		// SWORDS
@@ -291,7 +289,7 @@ public class McMMOReset extends Feature {
 			.icon(new ItemStack(Material.PLAYER_HEAD))
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.SWORDS)
-			/*TODO*/
+			.tome(TomeType.MELEE)
 			.build());
 		register(CustomEnchantReward.builder().skill(PrimarySkillType.SWORDS)
 			.enchant(Enchant.FROST_ASPECT)
@@ -330,13 +328,13 @@ public class McMMOReset extends Feature {
 			.icon(new ItemStack(Material.WATER_BUCKET))
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.TRIDENTS)
-			/*TODO*/
+			.tome(TomeType.MELEE)
 			.build());
 		register(CustomEnchantReward.builder().skill(PrimarySkillType.TRIDENTS)
 			.enchant(Enchant.THOR)
 			.build());
 		register(CustomEnchantReward.builder().skill(PrimarySkillType.TRIDENTS)
-			//.enchant(Enchant.UNDERTOW) TODO
+			.enchant(Enchant.UNDERTOW)
 			.build());
 
 		// UNARMED
@@ -351,7 +349,7 @@ public class McMMOReset extends Feature {
 			.item(new ItemStack(Material.FISHING_ROD)) // TODO
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.UNARMED)
-			/*TODO - ARMOR*/
+			.tome(TomeType.ARMOR)
 			.build());
 
 		// WOODCUTTING
@@ -372,7 +370,7 @@ public class McMMOReset extends Feature {
 			.item(new ItemStack(Material.GOLDEN_DANDELION)) // TODO
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.WOODCUTTING)
-			/*TODO*/
+			.tome(TomeType.TOOLS)
 			.build());
 		register(CustomEnchantReward.builder().skill(PrimarySkillType.WOODCUTTING)
 			.enchant(Enchant.ENERGIZING)
@@ -414,7 +412,7 @@ public class McMMOReset extends Feature {
 	@SuperBuilder
 	@EqualsAndHashCode(callSuper = true)
 	public static class TomeReward extends McMMOResetReward {
-		// TODO TomeType?
+		TomeType tome;
 	}
 
 	@Data

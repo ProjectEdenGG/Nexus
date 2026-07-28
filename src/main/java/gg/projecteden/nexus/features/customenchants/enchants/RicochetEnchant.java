@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
+import gg.projecteden.nexus.utils.ArrowSnapshot;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -150,28 +151,5 @@ public class RicochetEnchant extends CustomEnchant implements Listener {
 			})
 			.min(Comparator.comparing(entity -> Distance.distance(livingEntity, entity).get()));
 	}
-
-
-	public record ArrowSnapshot(World world, Class<? extends AbstractArrow> arrowClass, float speed, double damage, ProjectileSource shooter,
-								 boolean critical, int pierceLevel, int fireTicks, boolean gravity, ItemStack item, ItemStack weapon) {
-		static ArrowSnapshot of(AbstractArrow arrow) {
-			ItemStack weapon = arrow.getWeapon();
-
-			return new ArrowSnapshot(
-				arrow.getWorld(),
-				arrow instanceof SpectralArrow ? SpectralArrow.class : Arrow.class,
-				(float) arrow.getVelocity().length(),
-				arrow.getDamage(),
-				arrow.getShooter(),
-				arrow.isCritical(),
-				arrow.getPierceLevel(),
-				arrow.getFireTicks(),
-				arrow.hasGravity(),
-				arrow.getItemStack().clone(),
-				weapon == null ? null : weapon.clone()
-			);
-		}
-	}
-
 
 }

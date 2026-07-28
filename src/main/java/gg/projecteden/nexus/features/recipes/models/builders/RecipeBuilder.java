@@ -277,4 +277,8 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	public static StoneCutterBuilder stoneCutter(Material material) {
 		return new StoneCutterBuilder(material);
 	}
+
+	public static SmithingTableBuilder smithing(ItemStack output) {
+		return new SmithingTableBuilder(output);
+	}
 }

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
-import gg.projecteden.nexus.features.customenchants.enchants.RicochetEnchant.ArrowSnapshot;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
+import gg.projecteden.nexus.utils.ArrowSnapshot;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

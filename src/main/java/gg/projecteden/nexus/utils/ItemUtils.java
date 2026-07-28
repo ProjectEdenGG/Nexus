@@ -116,10 +116,14 @@ public class ItemUtils {
 	}
 
 	public static boolean isModelMatch(ItemStack itemStack1, ItemStack itemStack2) {
+		return isModelMatch(itemStack1, itemStack2, true);
+	}
+
+	public static boolean isModelMatch(ItemStack itemStack1, ItemStack itemStack2, boolean requireSameType) {
 		if (Nullables.isNullOrAir(itemStack1) || Nullables.isNullOrAir(itemStack2))
 			return false;
 
-		if (itemStack1.getType() != itemStack2.getType())
+		if (itemStack1.getType() != itemStack2.getType() && requireSameType)
 			return false;
 
 		String modelId1 = new ItemBuilder(itemStack1).model();

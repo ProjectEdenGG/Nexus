@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25;
 import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25CandyBasket;
 import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25CandyBasket.CandyBasketTier;
 import gg.projecteden.nexus.features.listeners.events.fake.FakePlayerInteractEvent;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.Quiver;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
@@ -40,6 +41,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.RandomStringUtils;
@@ -430,6 +432,9 @@ public class Backpacks extends FunctionalRecipe implements IBackpack {
 
 			if (BackpackTier.of(backpack) == BackpackTier.HALLOWEEN && !(isNullOrAir(item) || Halloween25.isCandy(item)))
 				event.setCancelled(true);
+
+			if (BackpackTier.of(backpack) == BackpackTier.QUIVER && !(isNullOrAir(item) || MaterialTag.ARROWS.isTagged(item)))
+				event.setCancelled(true);
 		}
 
 		@EventHandler
@@ -498,6 +503,7 @@ public class Backpacks extends FunctionalRecipe implements IBackpack {
 
 	@Getter
 	@AllArgsConstructor
+	@RequiredArgsConstructor
 	public enum BackpackTier {
 		BASIC(3, Backpacks.class),
 		IRON(4, IronBackpack.class),
@@ -514,10 +520,17 @@ public class Backpacks extends FunctionalRecipe implements IBackpack {
 			public void handleClose(ItemStack backpack, List<ItemStack> contents) {
 				Halloween25CandyBasket.handleClose(backpack, contents);
 			}
+		},
+		QUIVER(1, Quiver.class, false) {
+			@Override
+			public void handleClose(ItemStack backpack, List<ItemStack> contents) {
+				Quiver.checkEmpty(backpack, contents);
+			}
 		};
 
 		final int rows;
 		final Class<? extends IBackpack> backpackClass;
+		boolean decoration = true;
 
 		public ItemModelType getModel() {
 			return ItemModelType.valueOf("BACKPACK_3D_" + name());
@@ -537,6 +550,7 @@ public class Backpacks extends FunctionalRecipe implements IBackpack {
 
 		public static void initDecoration() {
 			for (BackpackTier tier : values()) {
+				if (!tier.isDecoration()) continue;
 				if (tier != HALLOWEEN)
 					new Backpack(tier);
 				else
@@ -556,7 +570,6 @@ public class Backpacks extends FunctionalRecipe implements IBackpack {
 
 		public ItemStack apply(ItemStack backpack) {
 			return new ItemBuilder(backpack)
-				.model(getModel())
 				.nbt(nbt -> {
 					nbt.setString(Backpacks.NBT_KEY, RandomStringUtils.randomAlphabetic(10));
 					for (BackpackTier _tier : BackpackTier.values())
@@ -566,7 +579,7 @@ public class Backpacks extends FunctionalRecipe implements IBackpack {
 				.build();
 		}
 
-		public void handleClose(ItemStack backpack, List<ItemStack> contents) {}
+		public void handleClose(ItemStack backpack, List<ItemStack> contents) { }
 	}
 
 }

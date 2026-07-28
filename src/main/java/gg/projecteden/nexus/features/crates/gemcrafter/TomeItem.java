@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,12 +23,14 @@ public class TomeItem {
 	private TomeLevel level;
 
 	public ItemStack toItemStack() {
-		return new ItemBuilder(Material.PAPER)
+		return new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
 			.maxStackSize(1)
 			.name("&e" + StringUtils.camelCase(type) + " Tome")
 			.lore("&3Level: &e" + StringUtils.camelCase(level))
 			.model(type.getModel())
 			.nbt(nbt -> nbt.setString(LEVEL_KEY, level.name()))
+			.dyeColor(level.getDyeColor())
+			.itemFlags(ItemFlag.HIDE_DYE, ItemFlag.HIDE_ATTRIBUTES)
 			.build();
 	}
 
@@ -52,8 +55,7 @@ public class TomeItem {
 		FISHING_RODS(Enchant.LUCK_OF_THE_SEA, Enchant.LURE),
 		MACES(Enchant.DENSITY, Enchant.BREACH, Enchant.WIND_BURST),
 		TOOLS(Enchant.EFFICIENCY, Enchant.FORTUNE),
-		SPEARS(Enchant.SHARPNESS, Enchant.LOOTING, Enchant.KNOCKBACK, Enchant.FIRE_ASPECT, Enchant.LUNGE),
-		MELEE(Enchant.SHARPNESS, Enchant.BANE_OF_ARTHROPODS, Enchant.SMITE, Enchant.LOOTING, Enchant.KNOCKBACK, Enchant.FIRE_ASPECT, Enchant.SWEEPING_EDGE),
+		MELEE(Enchant.SHARPNESS, Enchant.BANE_OF_ARTHROPODS, Enchant.SMITE, Enchant.LOOTING, Enchant.KNOCKBACK, Enchant.FIRE_ASPECT, Enchant.SWEEPING_EDGE, Enchant.LUNGE),
 		TRIDENTS(Enchant.RIPTIDE, Enchant.LOYALTY, Enchant.IMPALING),
 		DURABILITY(Enchant.UNBREAKING, Enchant.MENDING)
 		;
@@ -63,7 +65,7 @@ public class TomeItem {
 		}
 
 		final Enchantment[] enchantments;
-		final String model = "misc/gem_crafter/tome/" + name().toLowerCase();
+		final String model = "survival/gem_crafter/tomes/" + name().toLowerCase();
 
 		public static TomeType fromTome(ItemStack tome) {
 			String itemModel = new ItemBuilder(tome).model();
@@ -74,13 +76,17 @@ public class TomeItem {
 		}
 	}
 
+	@Getter
+	@AllArgsConstructor
 	public enum TomeLevel {
-		NOVICE,
-		APPRENTICE,
-		ADEPT,
-		EXPERT,
-		MASTER
+		NOVICE("#429c00"),
+		APPRENTICE("#3357ff"),
+		ADEPT("#9c0b00"),
+		EXPERT("#a900ff"),
+		MASTER("#ffd83e"),
 		;
+
+		private final String dyeColor;
 
 		public static TomeLevel fromTome(ItemStack tome) {
 			AtomicReference<String> level = new AtomicReference<>();

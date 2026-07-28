@@ -54,6 +54,9 @@ public enum ArmorSkin implements EquipmentSkinType {
 	@Templateable
 	@HelmetCostume("hat/armor/shadow")
 	SHADOW,
+	// Boots only
+	@Internal
+	SLIME,
 	TANK,
 	THOR,
 	@Templateable

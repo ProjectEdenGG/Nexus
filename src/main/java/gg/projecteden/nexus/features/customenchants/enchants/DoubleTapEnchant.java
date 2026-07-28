@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
+import gg.projecteden.nexus.features.customenchants.EnchantUtils;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.Quiver;
+import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
@@ -50,7 +53,7 @@ public class DoubleTapEnchant extends CustomEnchant implements Listener {
 		Tasks.wait(1, () -> loadAdditionalProjectiles(player, hand));
 	}
 
-	private void loadAdditionalProjectiles(Player player, EquipmentSlot hand) {
+	public static void loadAdditionalProjectiles(Player player, EquipmentSlot hand) {
 		ItemStack crossbow = getHeldItem(player, hand);
 
 		if (crossbow.getType() != Material.CROSSBOW) return;
@@ -88,7 +91,7 @@ public class DoubleTapEnchant extends CustomEnchant implements Listener {
 		setHeldItem(player, hand, crossbow);
 	}
 
-	private ItemStack getHeldItem(Player player, EquipmentSlot hand) {
+	private static ItemStack getHeldItem(Player player, EquipmentSlot hand) {
 		if (hand == EquipmentSlot.OFF_HAND)
 			return player.getInventory().getItemInOffHand();
 
@@ -143,7 +146,7 @@ public class DoubleTapEnchant extends CustomEnchant implements Listener {
 		setHeldItem(player, hand, crossbow);
 	}
 
-	private List<ItemStack> getStoredProjectiles(ItemStack crossbow, int expectedSize) {
+	private static List<ItemStack> getStoredProjectiles(ItemStack crossbow, int expectedSize) {
 		List<ItemStack> projectiles = new ArrayList<>(ItemUtils.getNBTContentsOfNonInventoryItem(crossbow, expectedSize));
 
 		while (projectiles.size() < expectedSize)
@@ -152,7 +155,7 @@ public class DoubleTapEnchant extends CustomEnchant implements Listener {
 		return projectiles;
 	}
 
-	private int findNextProjectile(List<ItemStack> projectiles) {
+	private static int findNextProjectile(List<ItemStack> projectiles) {
 		for (int slot = 0; slot < projectiles.size(); slot++)
 			if (!Nullables.isNullOrAir(projectiles.get(slot)))
 				return slot;
@@ -160,23 +163,30 @@ public class DoubleTapEnchant extends CustomEnchant implements Listener {
 		return -1;
 	}
 
-	private boolean hasProjectile(List<ItemStack> projectiles) {
+	private static boolean hasProjectile(List<ItemStack> projectiles) {
 		return findNextProjectile(projectiles) != -1;
 	}
 
-	private ItemStack takeProjectile(Player player, EquipmentSlot crossbowHand) {
+	private static ItemStack takeProjectile(Player player, EquipmentSlot crossbowHand) {
 		PlayerInventory inventory = player.getInventory();
 		EquipmentSlot projectileHand = crossbowHand == EquipmentSlot.HAND ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND;
 
 		ItemStack heldProjectile = getHeldItem(player, projectileHand);
 
 		if (isProjectile(heldProjectile)) {
-			ItemStack result = copyOne(heldProjectile);
+			if (ItemUtils.isModelMatch(heldProjectile, Quiver.get(), false)) {
+				ItemStack item = Quiver.retrieveArrow(heldProjectile);
+				if (item != null)
+					return item;
+			}
+			else {
+				ItemStack result = copyOne(heldProjectile);
 
-			if (player.getGameMode() != GameMode.CREATIVE)
-				setHeldItem(player, projectileHand, decrement(heldProjectile));
+				if (player.getGameMode() != GameMode.CREATIVE)
+					setHeldItem(player, projectileHand, decrement(heldProjectile));
 
-			return result;
+				return result;
+			}
 		}
 
 		ItemStack[] contents = inventory.getStorageContents();
@@ -186,6 +196,13 @@ public class DoubleTapEnchant extends CustomEnchant implements Listener {
 
 			if (!isProjectile(item))
 				continue;
+
+			if (ItemUtils.isModelMatch(item, Quiver.get(), false)) {
+				ItemStack arrow = Quiver.retrieveArrow(item);
+				if (arrow != null)
+					return arrow;
+				continue;
+			}
 
 			ItemStack result = copyOne(item);
 
@@ -198,7 +215,7 @@ public class DoubleTapEnchant extends CustomEnchant implements Listener {
 		return null;
 	}
 
-	private boolean isProjectile(ItemStack item) {
+	private static boolean isProjectile(ItemStack item) {
 		if (Nullables.isNullOrAir(item))
 			return false;
 
@@ -208,7 +225,7 @@ public class DoubleTapEnchant extends CustomEnchant implements Listener {
 		};
 	}
 
-	private ItemStack copyOne(ItemStack item) {
+	private static ItemStack copyOne(ItemStack item) {
 		if (Nullables.isNullOrAir(item))
 			return null;
 
@@ -217,7 +234,7 @@ public class DoubleTapEnchant extends CustomEnchant implements Listener {
 		return result;
 	}
 
-	private ItemStack decrement(ItemStack item) {
+	private static ItemStack decrement(ItemStack item) {
 		if (item.getAmount() <= 1)
 			return null;
 
@@ -226,15 +243,15 @@ public class DoubleTapEnchant extends CustomEnchant implements Listener {
 		return result;
 	}
 
-	private void setHeldItem(Player player, EquipmentSlot hand, ItemStack item) {
+	private static void setHeldItem(Player player, EquipmentSlot hand, ItemStack item) {
 		if (hand == EquipmentSlot.OFF_HAND)
 			player.getInventory().setItemInOffHand(item);
 		else
 			player.getInventory().setItemInMainHand(item);
 	}
 
-	private int getCapacity(ItemStack crossbow) {
-		return getLevel(crossbow) * ARROWS_PER_LEVEL;
+	private static int getCapacity(ItemStack crossbow) {
+		return EnchantUtils.getLevel(Enchant.DOUBLE_TAP, crossbow) * ARROWS_PER_LEVEL;
 	}
 
 	private record RechargeKey(UUID player, EquipmentSlot hand) { }

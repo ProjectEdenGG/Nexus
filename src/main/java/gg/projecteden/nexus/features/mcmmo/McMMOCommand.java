@@ -10,6 +10,7 @@ import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetShopMenu;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.HeliosBow;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -236,6 +237,12 @@ public class McMMOCommand extends CustomCommand implements Listener {
 	@Description("Protect items from mcMMO repair/salvage")
 	void protectItems() {
 		new ProtectItemsProvider(player()).open();
+	}
+
+	@Path("heliosBow")
+	@Permission(Group.ADMIN)
+	void heliosBow() {
+		PlayerUtils.giveItem(player(), HeliosBow.getItem());
 	}
 
 	@Title("&0Protect from repair/salvage")
