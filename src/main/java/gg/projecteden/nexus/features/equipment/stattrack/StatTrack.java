@@ -8,6 +8,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.cooldown.Cooldown;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.stattrack.StatTrackItem;
 import gg.projecteden.nexus.models.stattrack.StatTrackItemService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -22,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Constructor;
@@ -212,7 +215,16 @@ public class StatTrack extends Feature implements Listener {
 		update((Player) event.getPlayer());
 	}
 
+	@EventHandler
+	public void onStartBlockBreak(PlayerInteractEvent event) {
+		if (event.getClickedBlock() == null) return;
+		if (!event.getAction().isLeftClick()) return;
+
+		CooldownService.isOnCooldown(event.getPlayer(), "stattrack-update-delay", TickTime.SECOND);
+	}
+
 	private void update(Player player) {
+		if (CooldownService.isOnCooldown(player.getUniqueId(), "stattrack-update-delay", TickTime.SECOND.get(), false)) return;
 		for (ItemStack item : player.getInventory().getContents())
 			if (isEnabledOn(item))
 				updateLore(item, getDisplayedStat(item), null);

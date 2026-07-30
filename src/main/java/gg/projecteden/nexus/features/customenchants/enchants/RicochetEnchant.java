@@ -133,23 +133,23 @@ public class RicochetEnchant extends CustomEnchant implements Listener {
 			arrow.setWeapon(snapshot.weapon().clone());
 	}
 
-	public Optional<LivingEntity> getNearestEntity(LivingEntity livingEntity, int radius, ProjectileSource source, List<UUID> ignoreUUIDs) {
-		return livingEntity.getEyeLocation().getNearbyEntities(radius, radius, radius).stream()
+	public Optional<LivingEntity> getNearestEntity(LivingEntity originEntity, int radius, ProjectileSource source, List<UUID> ignoreUUIDs) {
+		return originEntity.getEyeLocation().getNearbyEntities(radius, radius, radius).stream()
 			.filter(e -> e instanceof LivingEntity)
-			.filter(e -> !e.getUniqueId().equals(livingEntity.getUniqueId()))
+			.filter(e -> !e.getUniqueId().equals(originEntity.getUniqueId()))
 			.map(LivingEntity.class::cast)
 			.filter(entity -> {
 				if (ignoreUUIDs.contains(entity.getUniqueId())) return false;
-				if (!livingEntity.hasLineOfSight(entity)) return false;
+				if (!originEntity.hasLineOfSight(entity)) return false;
 				if (entity instanceof ArmorStand) return false;
 				if (!(source instanceof Player player)) return true;
 				if (player.getUniqueId().equals(entity.getUniqueId())) return false;
-				if (player.getGameMode() != GameMode.SURVIVAL) return false;
-				if (!PVP_SERVICE.get(player).isEnabled()) return !(entity instanceof Player);
 				if (!(entity instanceof Player target)) return true;
+				if (!PVP_SERVICE.get(player).isEnabled()) return false;
+				if (target.getGameMode() != GameMode.SURVIVAL) return false;
 				return PVP_SERVICE.get(target).isEnabled();
 			})
-			.min(Comparator.comparing(entity -> Distance.distance(livingEntity, entity).get()));
+			.min(Comparator.comparing(entity -> Distance.distance(originEntity, entity).get()));
 	}
 
 }

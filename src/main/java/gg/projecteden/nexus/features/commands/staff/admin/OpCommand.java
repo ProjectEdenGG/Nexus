@@ -40,8 +40,9 @@ public class OpCommand extends CustomCommand {
 		else
 			Broadcast.adminIngame().message(PREFIX + oper + " opped " + opee).send();
 
-		send(player, PREFIX + "You are now op");
 
+		if (!player.equals(player()))
+			send(player, PREFIX + "You are now op");
 	}
 
 	@Path("list")

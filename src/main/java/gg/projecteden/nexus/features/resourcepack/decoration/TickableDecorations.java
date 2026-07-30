@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDe
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.models.decoration.DecorationUser;
 import gg.projecteden.nexus.models.decoration.DecorationUserService;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.ItemFrame;
@@ -42,7 +43,7 @@ public class TickableDecorations implements Listener {
 						continue;
 
 					if (_tickable.shouldTick())
-						_tickable.tick(tickable.getLocation());
+						_tickable.tick(tickable.getLocation().clone());
 				}
 			}
 		});
@@ -71,7 +72,7 @@ public class TickableDecorations implements Listener {
 						continue;
 
 					AtomicBoolean found = new AtomicBoolean(false);
-					tickable.getLocation().getNearbyEntitiesByType(ItemFrame.class, 1).forEach(itemFrame -> {
+					tickable.getLocation().getNearbyEntitiesByType(ItemFrame.class, 2).forEach(itemFrame -> {
 						if (!itemFrame.getUniqueId().equals(tickable.getUuid()))
 							return;
 

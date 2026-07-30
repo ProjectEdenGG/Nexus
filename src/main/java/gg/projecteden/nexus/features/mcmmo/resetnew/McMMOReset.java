@@ -1,26 +1,29 @@
 package gg.projecteden.nexus.features.mcmmo.resetnew;
 
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.gemcrafter.TomeItem.TomeType;
-import gg.projecteden.nexus.features.mcmmo.resetnew.attributes.HeadshotHandler;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.HeadshotHandler;
 import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.HeliosBow;
 import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.Quiver;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.axes.AxeEquipTimeHandler;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.crossbows.AccuracyIncrease;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.SuperBuilder;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.lang.reflect.Constructor;
 
 public class McMMOReset extends Feature {
 
@@ -76,12 +79,11 @@ public class McMMOReset extends Feature {
 			.description("Stores up to 9 stacks of arrows in a single slot. Bows will pull from this when firing")
 			.item(Quiver.get())
 			.build());
-		register(AttributeReward.builder().skill(PrimarySkillType.ARCHERY)
+		register(PermissionReward.builder().skill(PrimarySkillType.ARCHERY)
 			.name("Headshots")
 			.description("Unlock the ability to headshot mobs with shots, dealing double damage")
+			.permission("nexus.archeryheadshots")
 			.icon(new ItemStack(Material.ZOMBIE_HEAD))
-			//.checkHook(mcmmo -> mcmmo.canHeadshot()) TODO
-			//.unlockHook(mcmmo -> mcmmo.setCanHeadshot(true)) TODO
 			.handler(HeadshotHandler.class)
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.ARCHERY)
@@ -95,11 +97,11 @@ public class McMMOReset extends Feature {
 			.build());
 
 		// AXES
-		register(AttributeReward.builder().skill(PrimarySkillType.AXES)
+		register(PermissionReward.builder().skill(PrimarySkillType.AXES)
 			.name("Faster Equip Time")
 			.description("All axes will now charge to their fully equipped state in half the time")
 			.icon(new ItemStack(Material.CLOCK))
-			/*TODO*/
+			.handler(AxeEquipTimeHandler.class)
 			.build());
 		register(McMMOResetReward.builder().skill(PrimarySkillType.AXES)
 			.name("Tomahawk Upgrade")
@@ -118,11 +120,11 @@ public class McMMOReset extends Feature {
 			.build());
 
 		// CROSSBOWS
-		register(AttributeReward.builder().skill(PrimarySkillType.CROSSBOWS)
+		register(PermissionReward.builder().skill(PrimarySkillType.CROSSBOWS)
 			.name("Accuracy Increase")
 			.description("All shots fired from crossbows are much more accurate")
 			.icon(new ItemStack(Material.CROSSBOW))
-			/*TODO*/
+			.handler(AccuracyIncrease.class)
 			.build());
 		register(McMMOResetReward.builder().skill(PrimarySkillType.CROSSBOWS)
 			.name("Harpoon")
@@ -185,7 +187,7 @@ public class McMMOReset extends Feature {
 			.description("Hydrates soil in a 10x10 area")
 			.item(new ItemStack(Material.IRON_INGOT)) // TODO
 			.build());
-		register(AttributeReward.builder().skill(PrimarySkillType.HERBALISM)
+		register(PermissionReward.builder().skill(PrimarySkillType.HERBALISM)
 			.name("Healthier Food")
 			.description("All food items will saturate you for 1.5x the normal amount")
 			.icon(new ItemStack(Material.COOKED_BEEF))
@@ -202,7 +204,7 @@ public class McMMOReset extends Feature {
 			.build());
 
 		// MACES
-		register(AttributeReward.builder().skill(PrimarySkillType.MACES)
+		register(PermissionReward.builder().skill(PrimarySkillType.MACES)
 			.name("Mace on a Rope")
 			.description("All maces can now be thrown by right click. Spin while thrown to do a spin attack")
 			.icon(new ItemStack(Material.LEAD))
@@ -261,13 +263,13 @@ public class McMMOReset extends Feature {
 			.build());
 
 		// SPEARS
-		register(AttributeReward.builder().skill(PrimarySkillType.SPEARS)
+		register(PermissionReward.builder().skill(PrimarySkillType.SPEARS)
 			.name("Spear Movement Speed")
 			.description("Increase your movement speed while holding a spear")
 			.icon(new ItemStack(Material.DIAMOND_SPEAR))
 			/*TODO*/
 			.build());
-		register(AttributeReward.builder().skill(PrimarySkillType.SPEARS)
+		register(PermissionReward.builder().skill(PrimarySkillType.SPEARS)
 			.name("Lunge Hunger Buff")
 			.description("Lunge no longer takes hunger when activated")
 			.icon(new ItemStack(Material.COOKED_BEEF))
@@ -278,7 +280,7 @@ public class McMMOReset extends Feature {
 			.build());
 
 		// SWORDS
-		register(AttributeReward.builder().skill(PrimarySkillType.SWORDS)
+		register(PermissionReward.builder().skill(PrimarySkillType.SWORDS)
 			.name("Parrying")
 			.description("Unlock the ability to parry attacks with swords, stunning enemies on successful block")
 			.icon(new ItemStack(Material.SHIELD))
@@ -322,7 +324,7 @@ public class McMMOReset extends Feature {
 			.description("Shift + right-click to imbue yourself with Conduit Power, pacify Guardians, and prevent yourself from being afflicted with Mining Fatigue")
 			.icon(new ItemStack(Material.TRIDENT)) // TODO
 			.build());
-		register(AttributeReward.builder().skill(PrimarySkillType.TRIDENTS)
+		register(PermissionReward.builder().skill(PrimarySkillType.TRIDENTS)
 			.name("Sea Affinity")
 			.description("Reduce the amount of time you burn for")
 			.icon(new ItemStack(Material.WATER_BUCKET))
@@ -353,7 +355,7 @@ public class McMMOReset extends Feature {
 			.build());
 
 		// WOODCUTTING
-		register(AttributeReward.builder().skill(PrimarySkillType.WOODCUTTING)
+		register(PermissionReward.builder().skill(PrimarySkillType.WOODCUTTING)
 			.name("Auto Replant Saplings")
 			.description("After you chop down a tree, automatically plant a sapling in it's place")
 			.icon(new ItemStack(Material.OAK_SAPLING))
@@ -377,8 +379,14 @@ public class McMMOReset extends Feature {
 			.build());
 	}
 
+	@SneakyThrows
 	public void register(McMMOResetReward reward) {
-
+		if (reward instanceof PermissionReward permissionReward) {
+			if (permissionReward.getHandler() != null) {
+				Constructor constructor = permissionReward.getHandler().getConstructor();
+				Nexus.registerListener((Listener) constructor.newInstance());
+			}
+		}
 	}
 
 	@Data
@@ -397,15 +405,7 @@ public class McMMOReset extends Feature {
 	@EqualsAndHashCode(callSuper = true)
 	public static class PermissionReward extends McMMOResetReward {
 		private String permission;
-	}
-
-	@Data
-	@SuperBuilder
-	@EqualsAndHashCode(callSuper = true)
-	public static class AttributeReward extends McMMOResetReward {
-		private Predicate<McMMOPrestigeUser> checkHook;
-		private Consumer<McMMOPrestigeUser> unlockHook;
-		private Class<? extends AttributeRewardHandler> handler;
+		private Class<? extends Listener> handler;
 	}
 
 	@Data
