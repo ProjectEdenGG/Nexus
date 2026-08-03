@@ -13,6 +13,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 public class HeadshotHandler implements Listener {
 
+	public static final String PERMISSION = "nexus.archeryheadshots";
+
 	@EventHandler(ignoreCancelled = true)
 	public void onDamage(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof AbstractArrow arrow)) return;
@@ -22,7 +24,7 @@ public class HeadshotHandler implements Listener {
 
 		if (arrow.getLocation().distance(livingEntity.getEyeLocation()) > .3 && arrow.getLocation().getY() <= livingEntity.getEyeLocation().getY()) return;
 
-		if (!player.hasPermission("nexus.archeryheadshots")) return;
+		if (!player.hasPermission(PERMISSION)) return;
 		event.setDamage(event.getDamage() * 2);
 		new ParticleBuilder(Particle.CRIT)
 			.offset(.3, .3, .3)

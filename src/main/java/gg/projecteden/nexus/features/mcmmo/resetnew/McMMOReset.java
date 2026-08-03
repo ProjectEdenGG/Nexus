@@ -3,17 +3,23 @@ package gg.projecteden.nexus.features.mcmmo.resetnew;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.gemcrafter.TomeItem.TomeType;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.alchemy.AdvancedAlchemyHandler;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.alchemy.PotionLauncher;
 import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.HeadshotHandler;
 import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.HeliosBow;
 import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.Quiver;
 import gg.projecteden.nexus.features.mcmmo.resetnew.skills.axes.AxeEquipTimeHandler;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.axes.TomahawkHandler;
 import gg.projecteden.nexus.features.mcmmo.resetnew.skills.crossbows.AccuracyIncrease;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.crossbows.turret.TurretManager;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.SuperBuilder;
@@ -24,8 +30,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 public class McMMOReset extends Feature {
+
+	public static McMMOReset get() {
+		return Features.get(McMMOReset.class);
+	}
+
+	@Getter
+	private final List<McMMOResetReward> rewards = new ArrayList<>();
 
 	@Override
 	public void onStart() {
@@ -59,12 +74,13 @@ public class McMMOReset extends Feature {
 			.name("Potion Launcher & Stacking")
 			.description("Stack potions in your inventory using /stackpotions, and launch them with this item at enemies")
 			.permission("nexus.stackpotions")
-			.item(new ItemStack(Material.HOPPER) /*TODO*/)
+			.item(PotionLauncher.get())
 			.build());
 		register(PermissionReward.builder().skill(PrimarySkillType.ALCHEMY)
 			.name("Advanced Alchemy License")
 			.description("Become a Master Alchemist and learn how to brew level 3 potions, super-extended potions, or extended level 2 potions!")
-			.permission("nexus.advancedalchemy")
+			.permission(AdvancedAlchemyHandler.PERMISSION)
+			.handler(AdvancedAlchemyHandler.class)
 			.icon(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.ABSORPTION).build())
 			.build());
 
@@ -82,7 +98,7 @@ public class McMMOReset extends Feature {
 		register(PermissionReward.builder().skill(PrimarySkillType.ARCHERY)
 			.name("Headshots")
 			.description("Unlock the ability to headshot mobs with shots, dealing double damage")
-			.permission("nexus.archeryheadshots")
+			.permission(HeadshotHandler.PERMISSION)
 			.icon(new ItemStack(Material.ZOMBIE_HEAD))
 			.handler(HeadshotHandler.class)
 			.build());
@@ -101,13 +117,14 @@ public class McMMOReset extends Feature {
 			.name("Faster Equip Time")
 			.description("All axes will now charge to their fully equipped state in half the time")
 			.icon(new ItemStack(Material.CLOCK))
+			.permission(AxeEquipTimeHandler.PERMISSION)
 			.handler(AxeEquipTimeHandler.class)
 			.build());
 		register(McMMOResetReward.builder().skill(PrimarySkillType.AXES)
 			.name("Tomahawk Upgrade")
 			.description("Upgrade an existing axe into a tomahawk, allowing you to throw it to damage mobs in front of you")
-			.icon(new ItemStack(Material.DIAMOND_AXE)) // TODO
-			.item(new ItemStack(Material.DIAMOND_AXE)) // TODO
+			.icon(new ItemStack(Material.DIAMOND_AXE))
+			.item(TomahawkHandler.TEMPLATE)
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.AXES)
 			.tome(TomeType.MELEE)
@@ -127,9 +144,10 @@ public class McMMOReset extends Feature {
 			.handler(AccuracyIncrease.class)
 			.build());
 		register(McMMOResetReward.builder().skill(PrimarySkillType.CROSSBOWS)
-			.name("Harpoon")
-			.description("A new ranged weapon that fires tridents at a much higher speed")
-			.icon(new ItemStack(Material.TRIDENT))
+			.name("Turret (4)")
+			.description("A placeable ranged weapon that automatically fires at nearby mobs")
+			.icon(TurretManager.ITEM)
+			.item(new ItemBuilder(TurretManager.ITEM).amount(4).build())
 			.build());
 		register(TomeReward.builder().skill(PrimarySkillType.CROSSBOWS)
 			.tome(TomeType.CROSSBOWS)
@@ -387,6 +405,8 @@ public class McMMOReset extends Feature {
 				Nexus.registerListener((Listener) constructor.newInstance());
 			}
 		}
+
+		rewards.add(reward);
 	}
 
 	@Data

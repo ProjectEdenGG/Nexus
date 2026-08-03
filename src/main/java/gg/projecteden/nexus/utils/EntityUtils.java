@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.utils;
 
+import com.gmail.nossr50.datatypes.meta.HealthbarSnapshot;
+import com.gmail.nossr50.util.MetadataConstants;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTEntity;
 import gg.projecteden.nexus.Nexus;
@@ -207,4 +209,12 @@ public class EntityUtils {
 		return launchDirection;
 	}
 
+	public static boolean hasCustomName(LivingEntity entity) {
+		if (entity.customName() == null) return false;
+
+		if (!entity.hasMetadata(MetadataConstants.METADATA_KEY_HEALTHBAR_SNAPSHOT)) return false;
+
+		HealthbarSnapshot name = (HealthbarSnapshot) entity.getMetadata(MetadataConstants.METADATA_KEY_HEALTHBAR_SNAPSHOT).getFirst().value();
+		return name != null && Nullables.isNotNullOrEmpty(name.previousCustomName());
+	}
 }

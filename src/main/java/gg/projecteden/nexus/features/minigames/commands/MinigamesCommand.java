@@ -54,7 +54,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
-import gg.projecteden.nexus.models.blockparty.BlockPartyStatsService;
 import gg.projecteden.nexus.models.checkpoint.CheckpointService;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
@@ -1019,33 +1018,6 @@ public class MinigamesCommand extends _WarpSubCommand {
 		stats.forEach(stat -> {
 			int score = statRecords.stream().mapToInt(record -> record.getStats().getOrDefault(stat, 0)).sum();
 			send(" &3- " + stat.getTitle() + ": &e" + stat.format(score));
-		});
-	}
-
-	@HideFromWiki
-	@Path("stats transferBlockParty")
-	@Permission(Group.ADMIN)
-	void transferBlockParty() {
-		BlockPartyStatsService blockPartyStatsService = new BlockPartyStatsService();
-		MinigameStatsService service = new MinigameStatsService();
-		blockPartyStatsService.getAll().forEach(bp -> {
-			bp.getStats().forEach(stats -> {
-				Map<MinigameStatistic, Integer> map = new HashMap<>();
-				if (stats.isWin())
-					map.put(MatchStatistics.WINS, 1);
-				if (stats.getPlayTimeInSeconds() > 0)
-					map.put(MatchStatistics.TIME_PLAYED, stats.getPlayTimeInSeconds());
-				if (stats.getRoundsSurvived() > 0)
-					map.put(BlockPartyStatistics.ROUNDS_SURVIVED, stats.getRoundsSurvived());
-				if (stats.getPowerUpsCollected() > 0)
-					map.put(BlockPartyStatistics.POWER_UPS_COLLECTED, stats.getPowerUpsCollected());
-				if (stats.getPowerUpsUsed() > 0)
-					map.put(BlockPartyStatistics.POWER_UPS_USED, stats.getPowerUpsUsed());
-
-				MatchStatRecord record = new MatchStatRecord(MechanicType.BLOCK_PARTY, map);
-				record.setDate(stats.getTime().atStartOfDay());
-				service.edit(bp, mgm -> mgm.addRecord(record));
-			});
 		});
 	}
 

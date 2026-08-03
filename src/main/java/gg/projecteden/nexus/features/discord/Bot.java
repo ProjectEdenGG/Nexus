@@ -23,6 +23,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.EnumSet;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
@@ -127,8 +128,15 @@ public enum Bot {
 
 	void shutdown() {
 		if (jda != null) {
-			jda.cancelRequests();
-			jda.shutdownNow();
+			jda.shutdown();
+			try {
+				if (!jda.awaitShutdown(Duration.ofSeconds(10))) {
+					jda.shutdownNow();
+					jda.awaitShutdown();
+				}
+			} catch (InterruptedException ignore) {
+				jda.shutdownNow();
+			}
 			jda = null;
 		}
 	}

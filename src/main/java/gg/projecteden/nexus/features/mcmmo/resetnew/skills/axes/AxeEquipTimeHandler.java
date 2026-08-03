@@ -12,6 +12,8 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 
 public class AxeEquipTimeHandler extends ItemAttributeHandler {
 
+	public static final String PERMISSION = "nexus.axesequiptime";
+
 	private static final AttributeModifier attributeModifier = new AttributeModifier(
 		new NamespacedKey(Nexus.getInstance(), "axes_attackspeed"),
 		0.5,
@@ -26,7 +28,7 @@ public class AxeEquipTimeHandler extends ItemAttributeHandler {
 
 	@Override
 	public String getPermission() {
-		return "nexus.axesequiptime";
+		return PERMISSION;
 	}
 
 	@Override

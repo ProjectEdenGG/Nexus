@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.wiki;
 import com.google.gson.annotations.SerializedName;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.wiki._WikiSearchCommand.SearchResult.Query.Result;
+import gg.projecteden.nexus.features.wiki._WikiSearchCommand.SearchResult.Result;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -17,6 +17,7 @@ import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.StringEscapeUtils;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,15 +52,29 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 	static class SearchResult {
 		private Query query;
 
-		static SearchResult of(final WikiType wikiType, String query) {
+		static List<Result> search(final WikiType wikiType, String query) {
+			Map<String, Result> results = new LinkedHashMap<>();
+
+			SearchResult titleResults = request(wikiType, query, "title", 3);
+			if (!Nullables.isNullOrEmpty(titleResults.getQuery().getResults()))
+				titleResults.getQuery().getResults().forEach(result -> results.put(result.getTitle(), result));
+
+			SearchResult textResults = request(wikiType, query, "text", 5);
+			if (!Nullables.isNullOrEmpty(textResults.getQuery().getResults()))
+				textResults.getQuery().getResults().forEach(result -> results.putIfAbsent(result.getTitle(), result));
+
+			return results.values().stream().limit(3).toList();
+		}
+
+		private static SearchResult request(final WikiType wikiType, String query, String type, int limit) {
 			Map<String, String> parameters = Map.of(
-					"action", "query",
-					"list", "search",
-					"srwhat", "text",
-					"srlimit", "3",
-					"srsearch", StringEscapeUtils.escapeHtml(query),
-					"format", "json",
-					"utf8", ""
+				"action", "query",
+				"list", "search",
+				"srwhat", type,
+				"srlimit", String.valueOf(limit),
+				"srsearch", query,
+				"format", "json",
+				"utf8", ""
 			);
 
 			String url = wikiType.getApiPath() + HttpUtils.formatParameters(parameters);
@@ -70,24 +85,27 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 		static class Query {
 			@SerializedName("search")
 			private List<Result> results;
+		}
 
-			@Data
-			static class Result {
-				private String title;
-				private String snippet;
+		@Data
+		static class Result {
+			private String title;
+			private String snippet;
 
-				String getPage() {
-					return title.replaceAll(" ", "_");
-				}
+			String getPage() {
+				return title.replace(" ", "_");
+			}
 
-				String getSnippetFormatted() {
-					return HttpUtils.unescapeHtml(snippet
-							.replaceAll("<span class='searchmatch'>", ChatColor.YELLOW.toString())
-							.replaceAll("</span>", ChatColor.DARK_AQUA.toString())
-							.replaceAll("\\[\\[(.*?)\\|", "")
-							.replaceAll("]]", "")
-							.replaceAll("```", ""));
-				}
+			String getSnippetFormatted() {
+				if (Nullables.isNullOrEmpty(snippet))
+					return null;
+
+				return HttpUtils.unescapeHtml(snippet
+					.replaceAll("<span class=[\"']searchmatch[\"']>", ChatColor.YELLOW.toString())
+					.replace("</span>", ChatColor.DARK_AQUA.toString())
+					.replaceAll("\\[\\[(.*?)\\|", "")
+					.replace("]]", "")
+					.replace("```", ""));
 			}
 		}
 	}
@@ -110,16 +128,17 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 		line();
 		send(PREFIX + "Searching for &e" + query + "&3...");
 
-		SearchResult results = SearchResult.of(wikiType, query);
+		List<Result> results = SearchResult.search(wikiType, query);
 
-		if (Nullables.isNullOrEmpty(results.getQuery().getResults()))
+		if (Nullables.isNullOrEmpty(results))
 			error("No results found");
 
-		for (Result result : results.getQuery().getResults()) {
+		for (Result result : results) {
 			var json = json().newline().next("&3Page: &e" + result.getTitle());
 
-			if (Nullables.isNullOrEmpty(result.getSnippetFormatted().trim()))
-				json.newline().next("&e Snippet: &3" + result.getSnippetFormatted());
+			String snippet = result.getSnippetFormatted();
+			if (!Nullables.isNullOrEmpty(snippet))
+				json.newline().next("&eSnippet: &3" + snippet);
 
 			send(json.hover("&3Click to open").url(wikiType.getBasePath() + result.getPage()));
 		}

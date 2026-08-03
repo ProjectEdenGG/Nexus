@@ -6,6 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.mcmmo.resetnew.McMMOResetItems;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.axes.TomahawkHandler;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
@@ -97,7 +98,8 @@ public class CustomRecipes extends Feature implements Listener {
 				this::registerFurnace,
 				this::registerGlass,
 				this::registerMinecartsAndBoats,
-				this::misc
+				this::misc,
+				this::smithingRecipes
 			);
 
 			for (Runnable runnable : registers) {
@@ -528,7 +530,6 @@ public class CustomRecipes extends Feature implements Listener {
 		DecorationType.registerRecipes();
 
 		light();
-		smithingRecipes();
 	}
 
 	private void light() {
@@ -546,6 +547,33 @@ public class CustomRecipes extends Feature implements Listener {
 				.base(chestplate)
 				.addition(Material.ELYTRA)
 				.template(McMMOResetItems.ELYTRA_TEMPLATE)
+				.build();
+			recipe.setShowInMenu(false);
+			recipe.register();
+		}
+
+		for (Material axe : MaterialTag.AXES.getValues()) {
+			ItemStack tomahawk = new ItemStack(axe);
+			TomahawkHandler.setTomahawk(tomahawk);
+
+			Material addition = switch (axe) {
+				case WOODEN_AXE -> Material.OAK_PLANKS;
+				case STONE_AXE -> Material.COBBLESTONE;
+				case COPPER_AXE -> Material.COPPER_INGOT;
+				case IRON_AXE -> Material.IRON_INGOT;
+				case GOLDEN_AXE -> Material.GOLDEN_AXE;
+				case DIAMOND_AXE -> Material.DIAMOND;
+				case NETHERITE_AXE -> Material.NETHERITE_INGOT;
+				default -> null;
+			};
+
+			if (addition == null)
+				Nexus.warn("Cannot register tomahawk recipe for axe type: " + axe);
+
+			NexusRecipe recipe = RecipeBuilder.smithing(tomahawk)
+				.base(axe)
+				.addition(addition)
+				.template(TomahawkHandler.TEMPLATE)
 				.build();
 			recipe.setShowInMenu(false);
 			recipe.register();

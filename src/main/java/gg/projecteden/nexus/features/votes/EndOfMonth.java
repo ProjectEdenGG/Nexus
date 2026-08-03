@@ -16,6 +16,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.YearMonth;
 import java.util.Collections;
@@ -71,9 +72,13 @@ public class EndOfMonth {
 		private List<TopVoter> first;
 		private List<TopVoter> second;
 		private List<TopVoter> third;
+		@Nullable
 		private List<TopVoter> eco15kWinners;
+		@Nullable
 		private List<TopVoter> eco10kWinners;
+		@Nullable
 		private List<TopVoter> eco05kWinners;
+		@Nullable
 		private TopVoter mysteryChestWinner;
 
 		public TopVoterData(@NotNull YearMonth yearMonth) {
@@ -86,20 +91,22 @@ public class EndOfMonth {
 
 			total = topVoters.stream().map(TopVoter::getCount).mapToInt(Integer::valueOf).sum();
 			scores = topVoters.stream().map(TopVoter::getCount).distinct().collect(Collectors.toList());
-			if (scores.size() < 3)
-				throw new NexusException("Not enough top scores, something must be wrong. (Scores: " + scores + ")");
 
-			first = getVotersAt(scores.get(0));
-			second = getVotersAt(scores.get(1));
-			third = getVotersAt(scores.get(2));
+			if (!scores.isEmpty())
+				first = getVotersAt(scores.get(0));
+			if (scores.size() >= 2)
+				second = getVotersAt(scores.get(1));
+			if (scores.size() >= 3)
+				third = getVotersAt(scores.get(2));
 
 			eco15kWinners = getVotersWith(100);
 			eco10kWinners = getVotersBetween(75, 99);
 			eco05kWinners = getVotersBetween(50, 74);
 
-			mysteryChestWinner = RandomUtils.randomElement(getVotersWith(100).stream()
-					.filter(topVoter -> !first.contains(topVoter) && !second.contains(topVoter) && !third.contains(topVoter))
-					.collect(Collectors.toList()));
+			if (scores.size() >= 3)
+				mysteryChestWinner = RandomUtils.randomElement(getVotersWith(100).stream()
+						.filter(topVoter -> !first.contains(topVoter) && !second.contains(topVoter) && !third.contains(topVoter))
+						.collect(Collectors.toList()));
 		}
 
 		public List<TopVoter> getVotersWith(int count) {

@@ -58,7 +58,7 @@ public class HttpUtils {
 	}
 
 	public static Builder createRequest(String url, Object... objects) {
-		return new Request.Builder().url(String.format(url, encode(objects)));
+		return new Request.Builder().url(objects.length == 0 ? url : String.format(url, encode(objects)));
 	}
 
 	@SneakyThrows

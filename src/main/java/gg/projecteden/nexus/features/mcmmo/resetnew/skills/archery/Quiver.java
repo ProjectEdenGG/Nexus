@@ -41,7 +41,7 @@ public class Quiver implements IBackpack, Listener {
 	private static final ItemStack item = new ItemBuilder(Material.PAPER).model("survival/mcmmoreset/skills/archery/quiver").maxStackSize(1).name("&eQuiver").build();
 
 	public static ItemStack get() {
-		return item;
+		return item.clone();
 	}
 
 	@Override

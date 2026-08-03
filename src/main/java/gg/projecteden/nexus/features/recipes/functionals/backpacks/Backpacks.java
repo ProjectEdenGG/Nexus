@@ -523,6 +523,11 @@ public class Backpacks extends FunctionalRecipe implements IBackpack {
 		},
 		QUIVER(1, Quiver.class, false) {
 			@Override
+			public ItemModelType getModel() {
+				return ItemModelType.QUIVER;
+			}
+
+			@Override
 			public void handleClose(ItemStack backpack, List<ItemStack> contents) {
 				Quiver.checkEmpty(backpack, contents);
 			}
@@ -570,6 +575,7 @@ public class Backpacks extends FunctionalRecipe implements IBackpack {
 
 		public ItemStack apply(ItemStack backpack) {
 			return new ItemBuilder(backpack)
+				.model(getModel())
 				.nbt(nbt -> {
 					nbt.setString(Backpacks.NBT_KEY, RandomStringUtils.randomAlphabetic(10));
 					for (BackpackTier _tier : BackpackTier.values())

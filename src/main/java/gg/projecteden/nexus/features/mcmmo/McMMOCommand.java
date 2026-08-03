@@ -8,9 +8,15 @@ import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetShopMenu;
+import gg.projecteden.nexus.features.mcmmo.resetnew.FullInvMcMMOResetProvider;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.alchemy.PotionLauncher;
 import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.HeliosBow;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.axes.TomahawkHandler;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.crossbows.turret.Turret;
+import gg.projecteden.nexus.features.mcmmo.resetnew.skills.crossbows.turret.Turret.TurretStage;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -26,6 +32,7 @@ import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.survival.TurretConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -35,6 +42,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,6 +50,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -207,16 +216,21 @@ public class McMMOCommand extends CustomCommand implements Listener {
 			.send();
 	}
 
-	@Path("reset")
+	@Path("reset [--old] [--inv]")
 	@Description("Prestige skills for rewards")
-	void reset() {
+	void reset(@Switch boolean old, @Switch boolean inv) {
 		if (Nexus.getEnv() == Env.PROD && !isAdmin())
 			error("Temporarily disabled");
 
 		if (WorldGroup.of(player()) != WorldGroup.SURVIVAL)
 			error("You cannot use this outside of survival");
 
-		new McMMOResetShopMenu().open(player());
+		if (inv)
+			new FullInvMcMMOResetProvider().open(player());
+		else if (!old)
+			new McMMOResetShopMenu().open(player());
+		else
+			new McMMOResetProvider().open(player());
 	}
 
 	@Path("protectItem")
@@ -243,6 +257,41 @@ public class McMMOCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void heliosBow() {
 		PlayerUtils.giveItem(player(), HeliosBow.getItem());
+	}
+
+	@Path("potionLauncher")
+	@Permission(Group.ADMIN)
+	void potionLauncher() {
+		PlayerUtils.giveItem(player(), PotionLauncher.get());
+	}
+
+	@Path("tomahawkUpgrade")
+	@Permission(Group.ADMIN)
+	void setTomahawk() {
+		PlayerUtils.giveItem(player(), TomahawkHandler.TEMPLATE.clone());
+	}
+
+	@Path("turret spawn")
+	@Permission(Group.ADMIN)
+	void spawnTurret() {
+		new Turret(location(), null);
+		block().setType(Material.SMOOTH_STONE_SLAB);
+	}
+
+	@Path("turret delete")
+	@Permission(Group.ADMIN)
+	void deleteTurret() {
+		TurretConfigService.get().getTurrets().stream()
+			.min(Comparator.comparing(turret -> turret.getLocation().distanceSquared(location())))
+			.ifPresent(Turret::remove);
+	}
+
+	@Path("turret shoot")
+	@Permission(Group.ADMIN)
+	void shootTurret() {
+		TurretConfigService.get().getTurrets().stream()
+			.min(Comparator.comparing(turret -> turret.getLocation().distanceSquared(location())))
+			.ifPresent(turret -> turret.setStage(TurretStage.ARROW));
 	}
 
 	@Title("&0Protect from repair/salvage")

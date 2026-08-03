@@ -42,6 +42,7 @@ public enum ItemModelType {
 		}
 	},
 	WARD_CHARM("functional/ward_charm"),
+	QUIVER("survival/mcmmoreset/skills/archery/quiver"),
 	// badges
 	BADGE_CONNECT4("ui/gui/profile/badge/connect4"),
 	BADGE_BIRTHDAY("ui/gui/profile/badge/birthday"),

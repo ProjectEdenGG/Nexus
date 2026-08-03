@@ -12,8 +12,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bukkit.GameMode;
 import org.bukkit.World.Environment;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -77,7 +80,7 @@ public class KillerMoney implements Listener {
 		double boost = Booster.getTotalBoost(player, Boostable.KILLER_MONEY);
 		double money = mob.getRandomMoney() * boost;
 
-		var earnedEvent = new KillerMoneyEarnedEvent(player, money);
+		var earnedEvent = new KillerMoneyEarnedEvent(player, money, event.getEntity(), event.getDamageSource());
 		if (!earnedEvent.callEvent())
 			return;
 
@@ -86,12 +89,17 @@ public class KillerMoney implements Listener {
 
 	@Getter
 	@Setter
-	public static class KillerMoneyEarnedEvent extends PlayerEvent {
+	public static class KillerMoneyEarnedEvent extends PlayerEvent implements Cancellable {
 		private double money;
+		private LivingEntity killedEntity;
+		private DamageSource damageSource;
+		private boolean cancelled;
 
-		public KillerMoneyEarnedEvent(@NotNull Player who, double money) {
+		public KillerMoneyEarnedEvent(@NotNull Player who, double money, @NotNull LivingEntity entity, @NotNull DamageSource damageSource) {
 			super(who);
 			this.money = money;
+			this.killedEntity = entity;
+			this.damageSource = damageSource;
 		}
 
 		@Getter

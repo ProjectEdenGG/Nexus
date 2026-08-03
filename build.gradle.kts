@@ -128,6 +128,8 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.36")
     annotationProcessor("org.projectlombok:lombok:1.18.36")
 
+    compileOnly("com.github.Gecolay.GSit:core:3.5.1")
+
 //    implementation("com.ticxo:PlayerAnimator:R1.2.7")
 }
 
