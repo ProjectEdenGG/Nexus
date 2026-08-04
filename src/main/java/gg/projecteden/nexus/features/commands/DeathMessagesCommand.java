@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import com.gmail.nossr50.datatypes.meta.HealthbarSnapshot;
 import com.gmail.nossr50.util.MetadataConstants;
 import com.google.gson.Gson;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
@@ -372,8 +373,6 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		}
 		return finalComponent;
 	}
-
-	public record HealthbarSnapshot(@Nullable String previousCustomName, boolean previousNameVisible, long lastHitMs) { }
 
 	// display player (nick)names + colors
 	@NotNull
