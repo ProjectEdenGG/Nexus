@@ -2,8 +2,10 @@ package gg.projecteden.nexus.features.listeners;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -162,6 +164,9 @@ public class EasterEggs implements Listener {
 
 			Player clicked = PlayerUtils.getPlayer(uuid).getPlayer();
 			if (clicked == null)
+				return;
+
+			if (new MuteMenuService().get(clicked).hasMuted(MuteMenuItem.STAFF_EASTER_EGG))
 				return;
 
 			if (CooldownService.isOnCooldown(uuid, "Staff_EasterEgg_" + clicked.getName(), TickTime.SECOND.x(2)))
