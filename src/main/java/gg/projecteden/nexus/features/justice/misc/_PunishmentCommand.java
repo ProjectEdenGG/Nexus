@@ -3,10 +3,12 @@ package gg.projecteden.nexus.features.justice.misc;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
+import gg.projecteden.nexus.models.warps.WarpType;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
@@ -38,7 +40,7 @@ public abstract class _PunishmentCommand extends _JusticeCommand {
 				return;
 
 			try {
-				Punishments player = toPunish.remove(0);
+				Punishments player = toPunish.removeFirst();
 
 				if (player.getRank().isStaff())
 					if (!isAdmin())
@@ -48,6 +50,9 @@ public abstract class _PunishmentCommand extends _JusticeCommand {
 						.punisher(uuid())
 						.input(input)
 						.now(now));
+
+				if (getType() == PunishmentType.BAN)
+					new NerdService().edit(player, nerd -> nerd.setTeleportOnLogin(WarpType.HUB.get("gamemodes").getLocation()));
 
 				Optional<Punishment> cooldown = player.getCooldown(uuid());
 				if (cooldown.isPresent()) {
