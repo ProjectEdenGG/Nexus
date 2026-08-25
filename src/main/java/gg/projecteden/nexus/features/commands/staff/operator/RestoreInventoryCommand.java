@@ -46,7 +46,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 	}
 
 	public RestoreInventoryPlayer get(Player restorer) {
-		return restorers.get(restorer);
+		return restorers.get(restorer.getUniqueId());
 	}
 
 	@Async

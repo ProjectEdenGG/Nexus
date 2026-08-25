@@ -42,6 +42,8 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 	@Path
 	@Description("Discard all items your inventory")
 	void clear() {
+		if (!args().isEmpty())
+			error("This command takes no player arg");
 		inventory().setContents(cache.store());
 		send(PREFIX + "Inventory cleared. Undo with &c/ci undo");
 	}
