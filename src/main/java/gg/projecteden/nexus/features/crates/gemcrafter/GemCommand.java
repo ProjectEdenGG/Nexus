@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.crates.gemcrafter;
 
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -31,6 +32,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @NoArgsConstructor
@@ -85,6 +88,14 @@ public class GemCommand extends CustomCommand implements Listener {
 		event.setCancelled(true);
 	}
 
+	private final Map<Enchantment, List<Enchantment>> VANILLA_CONFLICTS = Map.of(
+		Enchant.FORTUNE, List.of(Enchant.SILK_TOUCH),
+		Enchant.SILK_TOUCH, List.of(Enchant.FORTUNE),
+		Enchant.RIPTIDE, List.of(Enchant.CHANNELING, Enchant.LOYALTY),
+		Enchant.LOYALTY, List.of(Enchant.RIPTIDE),
+		Enchant.CHANNELING, List.of(Enchant.RIPTIDE)
+	);
+
 	public void addGemEnchantToTool(Player player, ItemStack gem, ItemStack tool) {
 		Enchantment enchantment = gem.getEnchantments().entrySet().stream().findFirst().get().getKey();
 		int level = gem.getEnchantments().entrySet().stream().findFirst().get().getValue();
@@ -107,6 +118,21 @@ public class GemCommand extends CustomCommand implements Listener {
 		else if (!ItemUtils.getApplicableEnchantments(tool).contains(enchantment)) {
 			PlayerUtils.send(player, "&cThe enchantment on this gem is not applicable to the tool you are holding");
 			return;
+		}
+
+		for (Enchantment enchant : tool.getEnchantments().keySet()) {
+			if (enchant instanceof CustomEnchant || enchantment instanceof CustomEnchant) {
+				if (enchant.conflictsWith(enchantment) || enchantment.conflictsWith(enchant)) {
+					PlayerUtils.send(player, "&cThe enchantment on this gem conflicts with an enchantment on the tool you are holding");
+					return;
+				}
+			}
+			else { // Vanilla incompatibilities
+				if (VANILLA_CONFLICTS.containsKey(enchantment) && VANILLA_CONFLICTS.get(enchantment).contains(enchant)) {
+					PlayerUtils.send(player, "&cThe enchantment on this gem conflicts with an enchantment on the tool you are holding");
+					return;
+				}
+			}
 		}
 
 		if (tool.getItemMeta().hasEnchant(enchantment)) {

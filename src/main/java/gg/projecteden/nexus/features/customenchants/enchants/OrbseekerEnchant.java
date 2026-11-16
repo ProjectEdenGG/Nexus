@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.MaterialTag;
+import org.bukkit.Material;
 import org.bukkit.damage.DamageType;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Player;
@@ -10,17 +12,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 @SuppressWarnings("UnstableApiUsage")
 public class OrbseekerEnchant extends CustomEnchant implements Listener {
 
 	@Override
 	public int getMaxLevel() {
 		return 5;
-	}
-
-	@Override
-	public @NotNull EnchantmentTarget getItemTarget() {
-		return EnchantmentTarget.WEAPON;
 	}
 
 	@EventHandler
@@ -41,5 +40,9 @@ public class OrbseekerEnchant extends CustomEnchant implements Listener {
 		event.setDroppedExp(newAmount);
 	}
 
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.WEAPONS.exclude(MaterialTag.ARROWS).getValues().stream().toList();
+	}
 }
 

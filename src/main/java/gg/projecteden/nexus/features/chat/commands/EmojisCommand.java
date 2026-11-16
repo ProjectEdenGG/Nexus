@@ -127,23 +127,31 @@ public class EmojisCommand extends CustomCommand implements Listener {
 		final Chatter chatter = event.getChatter();
 		String message = event.getMessage();
 
+		boolean unowned = false;
+
 		if (chatter == null) {
 			for (Emoji emoji : Emoji.EMOJIS)
 				message = message.replaceAll(emoji.getEmoji(), "");
 		} else {
 			final EmojiUser user = new EmojiUserService().get(chatter);
-			if (!Rank.of(chatter).isAdmin())
-				for (Emoji emoji : Emoji.EMOJIS) {
-					if (!message.contains(emoji.getEmoji()))
-						continue;
-					if (user.owns(emoji))
-						continue;
 
-					message = message.replaceAll(emoji.getEmoji(), "");
+			for (Emoji emoji : Emoji.EMOJIS) {
+				if (user.owns(emoji) || Rank.of(chatter).isAdmin()) {
+					message = message.replaceAll("(?i):%s:".formatted(emoji.getName()), emoji.getEmoji());
+					continue;
 				}
+				if (!message.contains(emoji.getEmoji()))
+					continue;
+
+				String temp = message.replaceAll(emoji.getEmoji(), "");
+				if (!message.equals(temp))
+					unowned = true;
+				message = temp;
+			}
+
 		}
 
-		if (!message.equals(event.getMessage()))
+		if (unowned)
 			if (chatter != null)
 				Tasks.wait(1, () -> PlayerUtils.send(chatter, Chat.PREFIX + "&cYou do not own some of the emojis you used! &3Purchase in &c/emoji store"));
 

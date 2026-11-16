@@ -9,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
@@ -42,4 +44,8 @@ public class MidasCarrotsEnchant extends CustomEnchant implements Listener {
 		block.getWorld().dropItemNaturally(block.getLocation().toCenterLocation(), new ItemStack(Material.GOLDEN_CARROT));
 	}
 
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.HOES.getValues().stream().toList();
+	}
 }

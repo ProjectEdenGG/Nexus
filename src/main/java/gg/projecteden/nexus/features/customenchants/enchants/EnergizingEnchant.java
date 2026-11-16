@@ -1,11 +1,15 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.List;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
@@ -33,5 +37,10 @@ public class EnergizingEnchant extends CustomEnchant implements Listener {
 	@Override
 	public int getMaxLevel() {
 		return 1;
+	}
+
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.AXES.getValues().stream().toList();
 	}
 }

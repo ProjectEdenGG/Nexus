@@ -10,7 +10,9 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
@@ -38,6 +40,11 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 
 	private static final long BREAK_TICKS_THRESHOLD = TickTime.SECOND.x(2);
 	private static final long BLOCK_HARDNESS_THRESHOLD = 5;
+
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.PICKAXES.getValues().stream().toList();
+	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void on(BlockBreakEvent event) {

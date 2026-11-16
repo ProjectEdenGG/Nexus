@@ -43,7 +43,7 @@ public class TickableDecorations implements Listener {
 						continue;
 
 					if (_tickable.shouldTick())
-						_tickable.tick(tickable.getLocation().clone());
+						_tickable.tick(tickable.getLocation().clone(), tickable.getItemFrame());
 				}
 			}
 		});

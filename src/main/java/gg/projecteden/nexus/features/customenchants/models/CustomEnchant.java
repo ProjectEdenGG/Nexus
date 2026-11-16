@@ -180,7 +180,11 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 
 	@Override
 	public @NotNull Component description() {
-		return Component.text("Custom enchantment");
+		return Component.text(descriptionRaw());
+	}
+
+	protected String descriptionRaw() {
+		return "Custom enchant";
 	}
 
 	@Override

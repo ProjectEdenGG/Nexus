@@ -54,6 +54,10 @@ public interface EquipmentSkinType {
 		return false;
 	}
 
+	default boolean isInternal() {
+		return false;
+	}
+
 	@AllArgsConstructor
 	enum EquipmentSkinTypeClass {
 		ARMOR(ArmorSkin.class),

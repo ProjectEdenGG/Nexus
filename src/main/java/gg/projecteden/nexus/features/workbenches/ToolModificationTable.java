@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
 import gg.projecteden.nexus.features.equipment.stattrack.StatTrack;
 import gg.projecteden.nexus.features.equipment.stattrack.StatTrackStatistic;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
+import gg.projecteden.nexus.features.mcmmo.mastery.skills.acrobatics.SlimeBoots;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.InventoryManager;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
@@ -20,7 +21,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
@@ -281,8 +281,12 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 					if (ToolSkin.DEFAULT.applies(tool))
 						inv.tool = ToolSkin.DEFAULT.apply(tool);
 
-					if (ArmorSkin.DEFAULT.applies(tool))
-						inv.tool = ArmorSkin.DEFAULT.apply(tool);
+					if (ArmorSkin.DEFAULT.applies(tool)) {
+						if (tool.getPersistentDataContainer().has(SlimeBoots.KEY))
+							inv.tool = ArmorSkin.SLIME.apply(tool);
+						else
+							inv.tool = ArmorSkin.DEFAULT.apply(tool);
+					}
 
 					if (BackpackSkin.DEFAULT.applies(tool))
 						inv.tool = BackpackSkin.DEFAULT.apply(tool);
@@ -295,7 +299,10 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 
 					EquipmentSkinType type = EquipmentSkinType.of(tool);
 					if (type != null)
-						return ClickableItem.of(type.getTemplate(), e -> onClick(inv, tool, e));
+						if (type.isInternal())
+							return ClickableItem.of(new ItemBuilder(ItemModelType.GUI_TOOL_SKIN_OUTLINE).hideTooltip().build(), e -> onClick(inv, tool, e));
+						else
+							return ClickableItem.of(type.getTemplate(), e -> onClick(inv, tool, e));
 					return ClickableItem.of(new ItemBuilder(ItemModelType.GUI_TOOL_SKIN_OUTLINE).hideTooltip().build(), e -> onClick(inv, tool, e));
 				}
 			},

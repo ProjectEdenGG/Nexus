@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.GameModeWrapper;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -70,6 +71,12 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 				}
 			}
 		});
+	}
+
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return new MaterialTag(MaterialTag.PICKAXES, MaterialTag.AXES, MaterialTag.SHOVELS, MaterialTag.HOES)
+			.append(MaterialTag.ARMOR, MaterialTag.MELEE_WEAPONS).getValues().stream().toList();
 	}
 
 	@Nullable

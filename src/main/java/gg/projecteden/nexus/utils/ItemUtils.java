@@ -713,6 +713,10 @@ public class ItemUtils {
 	}
 
 	public static ItemStack setNBTContentsOfNonInventoryItem(ItemStack mainItem, List<ItemStack> itemStacks) {
+		return setNBTContentsOfNonInventoryItem(mainItem, itemStacks, "ProjectEden");
+	}
+
+	public static ItemStack setNBTContentsOfNonInventoryItem(ItemStack mainItem, List<ItemStack> itemStacks, String name) {
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.create();
 		for (int i = 0; i < itemStacks.size(); i++) {
 			if (Nullables.isNullOrAir(itemStacks.get(i)))
@@ -736,7 +740,7 @@ public class ItemUtils {
 					if (item instanceof CompoundTag compoundTag)
 						compoundTag.putInt("DataVersion", SharedConstants.getCurrentVersion().dataVersion().version());
 			});
-			tag.put("ProjectEden", value);
+			tag.put(name, value);
 		}
 
 		handle.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -747,15 +751,19 @@ public class ItemUtils {
 	}
 
 	public static List<ItemStack> getNBTContentsOfNonInventoryItem(ItemStack backpack, int expectedSize) {
+		return getNBTContentsOfNonInventoryItem(backpack, expectedSize, "ProjectEden");
+	}
+
+	public static List<ItemStack> getNBTContentsOfNonInventoryItem(ItemStack backpack, int expectedSize, String name) {
 		net.minecraft.world.item.ItemStack handle = CraftItemStack.asNMSCopy(backpack);
 
 		List<ItemStack> bukkit = new ArrayList<>();
 
 		if (!handle.has(DataComponents.CUSTOM_DATA)) return bukkit;
-		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().contains("ProjectEden")) return bukkit;
-		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden").get().contains("Items")) return bukkit;
+		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().contains(name)) return bukkit;
+		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound(name).get().contains("Items")) return bukkit;
 
-		CompoundTag pe = handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden").get();
+		CompoundTag pe = handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound(name).get();
 		ListTag listTag = pe.getList("Items").get();
 		pe.put("Items", SerializationUtils.NBT.updateItemStacks(listTag));
 

@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Floo
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.ItemFrame;
 
 public class Waystone extends FloorThing implements TickableDecoration {
 	boolean activated;
@@ -23,7 +24,7 @@ public class Waystone extends FloorThing implements TickableDecoration {
 	}
 
 	@Override
-	public void tick(Location location) {
+	public void tick(Location location, ItemFrame itemFrame) {
 		new ParticleBuilder(Particle.ENCHANT).location(location.add(0, 1, 0).toCenterLocation()).spawn();
 	}
 }

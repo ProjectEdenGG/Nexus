@@ -6,17 +6,8 @@ import com.gmail.nossr50.events.skills.salvage.McMMOPlayerSalvageCheckEvent;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider;
-import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
-import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetShopMenu;
-import gg.projecteden.nexus.features.mcmmo.resetnew.FullInvMcMMOResetProvider;
-import gg.projecteden.nexus.features.mcmmo.resetnew.skills.alchemy.PotionLauncher;
-import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.HeliosBow;
-import gg.projecteden.nexus.features.mcmmo.resetnew.skills.axes.TomahawkHandler;
-import gg.projecteden.nexus.features.mcmmo.resetnew.skills.crossbows.turret.Turret;
-import gg.projecteden.nexus.features.mcmmo.resetnew.skills.crossbows.turret.Turret.TurretStage;
+import gg.projecteden.nexus.features.mcmmo.mastery.menu.ClaimRewardMenu;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -32,17 +23,15 @@ import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.survival.TurretConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -50,12 +39,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
@@ -170,67 +154,29 @@ public class McMMOCommand extends CustomCommand implements Listener {
 		runCommand("mcrefresh");
 	}
 
-	// Custom stuff
-
-	@Path("prestige [player]")
-	@Description("View the number of times a player has prestiged their skills")
-	void prestige(@Arg("self") McMMOPrestigeUser user) {
-		if (user.getPrestiges().isEmpty())
-			error((isSelf(user) ? "You have" : user.getNickname() + " has") + " not prestiged any of their skills");
-
-		send(PREFIX + "Prestiges for &e" + user.getNickname());
-		user.getPrestiges().forEach((type, count) -> send("&3 " + camelCase(type) + ": &e" + count));
-	}
-
-	@Path("prestige top [page] [--skill]")
-	@Description("View the prestige leaderboards")
-	void prestige_top(@Arg("1") int page, @Switch ResetSkillType skill) {
-		Map<UUID, Integer> prestiges = new HashMap<>() {{
-			for (var user : new McMMOPrestigeUserService().getAll()) {
-				final int total;
-				if (skill == null)
-					total = user.getPrestiges().values().stream().mapToInt(Integer::valueOf).sum();
-				else
-					total = user.getPrestige(skill);
-
-				if (total > 0)
-					put(user.getUuid(), total);
-			}
-		}};
-
-		if (prestiges.isEmpty())
-			error("No prestiges found");
-
-		send(PREFIX + (skill == null ? "" : skill.name() + " ") + "Prestige leaderboard");
-
-		final BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) ->
-			json("&3" + index + " &e" + Nerd.of(uuid).getColoredName() + " &7- " + prestiges.get(uuid))
-				.command("/mcmmo prestige " + Nickname.of(uuid))
-				.hover("Click to view user's prestiges");
-
-		new Paginator<UUID>()
-			.values(Utils.sortByValueReverse(prestiges).keySet())
-			.formatter(formatter)
-			.command("/mcmmo prestige top" + (skill == null ? "" : " --skill=" + skill))
-			.page(page)
-			.send();
-	}
-
-	@Path("reset [--old] [--inv]")
+	@Path("mastery [--admin] [--skill] [--lineSpacing]")
 	@Description("Prestige skills for rewards")
-	void reset(@Switch boolean old, @Switch boolean inv) {
+	void reset(@Switch @Arg(value = "false", permission = Group.SENIOR_STAFF) boolean admin, @Switch @Arg(permission = Group.SENIOR_STAFF) PrimarySkillType skill) {
 		if (Nexus.getEnv() == Env.PROD && !isAdmin())
 			error("Temporarily disabled");
 
 		if (WorldGroup.of(player()) != WorldGroup.SURVIVAL)
 			error("You cannot use this outside of survival");
 
-		if (inv)
-			new FullInvMcMMOResetProvider().open(player());
-		else if (!old)
-			new McMMOResetShopMenu().open(player());
-		else
-			new McMMOResetProvider().open(player());
+		new ClaimRewardMenu(skill, admin).open(player());
+	}
+
+	@Path("mastery award <player> <skill> <xp>")
+	@Description("Gives mastery xp to the player")
+	@Permission(Group.ADMIN)
+	void masteryAward(OfflinePlayer player, PrimarySkillType skill, int xp) {
+		if (skill.isChildSkill())
+			error("That skill is not supported for mastery");
+		if (xp <= 0)
+			error("XP must be greater than 0");
+
+		new McMMOPrestigeUserService().edit(player, user -> user.awardExperience(skill, xp));
+		send(PREFIX + "Gave &e" + xp + " " + camelCase(skill) + " &3mastery xp to &e" + Nickname.of(player));
 	}
 
 	@Path("protectItem")
@@ -251,47 +197,6 @@ public class McMMOCommand extends CustomCommand implements Listener {
 	@Description("Protect items from mcMMO repair/salvage")
 	void protectItems() {
 		new ProtectItemsProvider(player()).open();
-	}
-
-	@Path("heliosBow")
-	@Permission(Group.ADMIN)
-	void heliosBow() {
-		PlayerUtils.giveItem(player(), HeliosBow.getItem());
-	}
-
-	@Path("potionLauncher")
-	@Permission(Group.ADMIN)
-	void potionLauncher() {
-		PlayerUtils.giveItem(player(), PotionLauncher.get());
-	}
-
-	@Path("tomahawkUpgrade")
-	@Permission(Group.ADMIN)
-	void setTomahawk() {
-		PlayerUtils.giveItem(player(), TomahawkHandler.TEMPLATE.clone());
-	}
-
-	@Path("turret spawn")
-	@Permission(Group.ADMIN)
-	void spawnTurret() {
-		new Turret(location(), null);
-		block().setType(Material.SMOOTH_STONE_SLAB);
-	}
-
-	@Path("turret delete")
-	@Permission(Group.ADMIN)
-	void deleteTurret() {
-		TurretConfigService.get().getTurrets().stream()
-			.min(Comparator.comparing(turret -> turret.getLocation().distanceSquared(location())))
-			.ifPresent(Turret::remove);
-	}
-
-	@Path("turret shoot")
-	@Permission(Group.ADMIN)
-	void shootTurret() {
-		TurretConfigService.get().getTurrets().stream()
-			.min(Comparator.comparing(turret -> turret.getLocation().distanceSquared(location())))
-			.ifPresent(turret -> turret.setStage(TurretStage.ARROW));
 	}
 
 	@Title("&0Protect from repair/salvage")

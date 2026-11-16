@@ -1,5 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.nexus.features.mcmmo.mastery.skills.excavation.Sieve;
+import gg.projecteden.nexus.features.mcmmo.mastery.skills.mining.BeaconEnhancer;
+import gg.projecteden.nexus.features.mcmmo.mastery.skills.mining.RockCrusher;
+import gg.projecteden.nexus.features.mcmmo.mastery.skills.woodcutting.ResinTap;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
@@ -67,6 +71,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Edibl
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Edible.EdibleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Mailbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerHeadBlock;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Sprinkler;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Waystone;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Well;
@@ -2338,6 +2343,20 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", ItemModelType.TOOL_MODIFICATION_TABLE, HitboxFloor._1x2H)),
 
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	SIEVE(new Sieve()),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	ROCK_CRUSHER(new RockCrusher()),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	SPRINKLER(new Sprinkler("sprinkler", ItemModelType.SPRINKLER)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	BEACON_ENHANCER(new BeaconEnhancer()),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	RESIN_TAP(new ResinTap()),
 	;
 	// @formatter:on
 

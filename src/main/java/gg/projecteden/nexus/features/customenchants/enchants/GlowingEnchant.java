@@ -4,15 +4,19 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import org.bukkit.Material;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class GlowingEnchant extends CustomEnchant {
 
@@ -48,8 +52,7 @@ public class GlowingEnchant extends CustomEnchant {
 	}
 
 	@Override
-	public @NotNull EnchantmentTarget getItemTarget() {
-		return EnchantmentTarget.ARMOR_HEAD;
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.ALL_HELMETS.getValues().stream().toList();
 	}
-
 }

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.crates.gemcrafter;
 
 import gg.projecteden.nexus.features.crates.CrateHandler;
+import gg.projecteden.nexus.features.crates.gemcrafter.TomeItem.TomeLevel;
 import gg.projecteden.nexus.features.crates.gemcrafter.TomeItem.TomeType;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateType;
@@ -52,9 +53,7 @@ public class GemCrafterHandler extends CrateHandler {
 		int maxLevel = enchantment.getMaxLevel();
 		maxLevel = Math.clamp(maxLevel, 1, 5);
 
-		double level = 1 + tome.getLevel().ordinal() * (maxLevel - 1) / 4.0;
-		if (level % 1 != 0)
-			level = RandomUtils.chanceOf((level % 1) * 100) ? Math.ceil(level) : Math.floor(level);
+		double level = tome.getLevel() == TomeLevel.MASTER && maxLevel > 1 ? maxLevel + 1 : maxLevel;
 
 		return new CrateLoot(-1,
 				"&d" + AdventureUtils.asPlainText(enchantment.displayName((int) level)),

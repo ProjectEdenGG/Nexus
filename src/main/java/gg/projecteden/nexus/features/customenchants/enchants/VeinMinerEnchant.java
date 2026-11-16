@@ -7,6 +7,7 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
@@ -29,6 +30,11 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 	@Override
 	public boolean conflictsWith(Enchantment enchantment) {
 		return enchantment == Enchant.TUNNELING;
+	}
+
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.PICKAXES.getValues().stream().toList();
 	}
 
 	private static final int BREAK_LIMIT = 8;

@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.mcmmo;
 
-import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
@@ -14,7 +13,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.afk.AFKCommand;
 import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Nullables;
@@ -30,7 +28,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class McMMOListener implements Listener {
@@ -108,28 +106,10 @@ public class McMMOListener implements Listener {
 	@EventHandler
 	public void onMcMMOLevelUp(McMMOPlayerLevelUpEvent event) {
 		int skillLevel = event.getSkillLevel();
-		if (skillLevel > 0 && skillLevel % McMMO.TIER_ONE == 0)
+		if (UserManager.getOfflinePlayer(event.getPlayer()).getPowerLevel() == (Arrays.stream(PrimarySkillType.values()).filter(skill -> !skill.isChildSkill()).count()) * McMMO.TIER_ONE)
+			Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
+		else if (skillLevel > 0 && skillLevel % McMMO.TIER_ONE == 0)
 			Koda.say(Nickname.of(event.getPlayer()) + " reached level " + skillLevel + " in " + StringUtils.camelCase(event.getSkill().name()) + "! Congratulations!");
-
-		final McMMOPlayer mcMMOPlayer = UserManager.getOfflinePlayer(event.getPlayer());
-
-		final List<ResetSkillType> tierOne = new ArrayList<>();
-		final List<ResetSkillType> tierTwo = new ArrayList<>();
-		for (ResetSkillType skillType : ResetSkillType.values()) {
-			final int level = mcMMOPlayer.getSkillLevel(skillType.asPrimarySkill());
-			if (level >= McMMO.TIER_ONE)
-				tierOne.add(skillType);
-
-			if (level >= McMMO.TIER_TWO)
-				tierTwo.add(skillType);
-		}
-
-		if (tierTwo.size() == ResetSkillType.values().length)
-			if (mcMMOPlayer.getSkillLevel(event.getSkill()) == McMMO.TIER_TWO)
-				Koda.say(Nickname.of(event.getPlayer()) + " has exceptionally mastered all their skills! Congratulations!");
-		else if (tierOne.size() == ResetSkillType.values().length)
-			if (mcMMOPlayer.getSkillLevel(event.getSkill()) == McMMO.TIER_ONE)
-				Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
 	}
 
 	@EventHandler

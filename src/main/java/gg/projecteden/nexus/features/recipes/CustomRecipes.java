@@ -5,8 +5,8 @@ import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
-import gg.projecteden.nexus.features.mcmmo.resetnew.McMMOResetItems;
-import gg.projecteden.nexus.features.mcmmo.resetnew.skills.axes.TomahawkHandler;
+import gg.projecteden.nexus.features.mcmmo.mastery.skills.acrobatics.ElytraTemplate;
+import gg.projecteden.nexus.features.mcmmo.mastery.skills.axes.TomahawkHandler;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
@@ -43,7 +43,6 @@ import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -546,7 +545,7 @@ public class CustomRecipes extends Feature implements Listener {
 			NexusRecipe recipe = RecipeBuilder.smithing(builder.build())
 				.base(chestplate)
 				.addition(Material.ELYTRA)
-				.template(McMMOResetItems.ELYTRA_TEMPLATE)
+				.template(ElytraTemplate.ITEM)
 				.build();
 			recipe.setShowInMenu(false);
 			recipe.register();
@@ -561,7 +560,7 @@ public class CustomRecipes extends Feature implements Listener {
 				case STONE_AXE -> Material.COBBLESTONE;
 				case COPPER_AXE -> Material.COPPER_INGOT;
 				case IRON_AXE -> Material.IRON_INGOT;
-				case GOLDEN_AXE -> Material.GOLDEN_AXE;
+				case GOLDEN_AXE -> Material.GOLD_INGOT;
 				case DIAMOND_AXE -> Material.DIAMOND;
 				case NETHERITE_AXE -> Material.NETHERITE_INGOT;
 				default -> null;

@@ -2,8 +2,10 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrowableProjectile;
@@ -13,6 +15,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.List;
 
 public class FrostAspectEnchant extends CustomEnchant implements Listener {
 
@@ -65,5 +69,10 @@ public class FrostAspectEnchant extends CustomEnchant implements Listener {
 	@Override
 	public int getMaxLevel() {
 		return 3;
+	}
+
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.SWORDS.getValues().stream().toList();
 	}
 }

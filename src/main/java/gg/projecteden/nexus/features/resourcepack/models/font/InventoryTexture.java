@@ -73,6 +73,11 @@ public enum InventoryTexture {
 	GUI_BLANK_FIVE("洌"),
 	GUI_BLANK_SIX("渌"),
 
+	GUI_MCMMO_PROCESSING_MACHINE("数"),
+	GUI_MCMMO_PRESTIGE("舸", 4),
+	GUI_MCMMO_ITEMS_NO_ENCHANTS("舡", 4),
+	GUI_MCMMO_ITEMS_WITH_ENCHANTS("舾", 4),
+
 	;
 
 	@NonNull

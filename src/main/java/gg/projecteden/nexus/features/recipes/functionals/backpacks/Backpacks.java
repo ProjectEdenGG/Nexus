@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25;
 import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25CandyBasket;
 import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25CandyBasket.CandyBasketTier;
 import gg.projecteden.nexus.features.listeners.events.fake.FakePlayerInteractEvent;
-import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.Quiver;
+import gg.projecteden.nexus.features.mcmmo.mastery.skills.archery.Quiver;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;

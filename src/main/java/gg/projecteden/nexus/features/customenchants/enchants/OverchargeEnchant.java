@@ -3,32 +3,21 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.Tasks;
-import io.papermc.paper.registry.RegistryKey;
-import io.papermc.paper.registry.set.RegistryKeySet;
-import io.papermc.paper.registry.set.RegistrySet;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
-import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.AbstractArrow;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.SpectralArrow;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,9 +38,10 @@ public class OverchargeEnchant extends CustomEnchant implements Listener {
 		return 3;
 	}
 
+
 	@Override
-	public boolean conflictsWith(@NotNull Enchantment enchantment) {
-		return enchantment.getKey().getKey().contains("barrage");
+	public boolean conflictsWith(@NonNull Enchantment enchantment) {
+		return enchantment == Enchant.BARRAGE;
 	}
 
 	@Override

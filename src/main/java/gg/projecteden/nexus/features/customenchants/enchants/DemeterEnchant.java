@@ -327,4 +327,8 @@ public class DemeterEnchant extends CustomEnchant implements Listener {
 		};
 	}
 
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.ALL_BOOTS.getValues().stream().toList();
+	}
 }

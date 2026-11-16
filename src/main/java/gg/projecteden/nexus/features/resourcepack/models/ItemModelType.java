@@ -42,7 +42,22 @@ public enum ItemModelType {
 		}
 	},
 	WARD_CHARM("functional/ward_charm"),
+	// mcmmo
 	QUIVER("survival/mcmmoreset/skills/archery/quiver"),
+	SIEVE("survival/mcmmoreset/skills/excavation/sieve"),
+	ROCK_CRUSHER("survival/mcmmoreset/skills/mining/rock_crusher"),
+	SPRINKLER("survival/mcmmoreset/skills/herbalism/sprinkler"),
+	EXPERIENCE_BOTTLER("survival/mcmmoreset/skills/repair/experience_bottler"),
+	BEACON_ENHANCER("survival/mcmmoreset/skills/mining/beacon_enhancer"),
+	EXPLOSIVE_DEVICE("survival/mcmmoreset/skills/mining/explosive_device/item"),
+	EXPLOSIVE_DEVICE_DENIED("survival/mcmmoreset/skills/mining/explosive_device/denied"),
+	EXPLOSIVE_DEVICE_SUCCESS("survival/mcmmoreset/skills/mining/explosive_device/success"),
+	HORSE_INVENTORY_PET("survival/mcmmoreset/skills/taming/horse_pet"),
+	CAT_INVENTORY_PET("survival/mcmmoreset/skills/taming/cat_pet"),
+	POSEIDONS_TRIDENT("survival/mcmmoreset/skills/trident/poseidons_trident"),
+	EXTENDO_ARM("survival/mcmmoreset/skills/unarmed/extendo_arm"),
+	GRAPPLING_HOOK("survival/mcmmoreset/skills/unarmed/grappling_hook"),
+	RESIN_TAP("survival/mcmmoreset/skills/woodcutting/resin_tap"),
 	// badges
 	BADGE_CONNECT4("ui/gui/profile/badge/connect4"),
 	BADGE_BIRTHDAY("ui/gui/profile/badge/birthday"),

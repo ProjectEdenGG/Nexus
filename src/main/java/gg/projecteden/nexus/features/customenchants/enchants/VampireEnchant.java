@@ -2,7 +2,9 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrowableProjectile;
@@ -12,7 +14,14 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class VampireEnchant extends CustomEnchant implements Listener {
+
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.MELEE_WEAPONS.getValues().stream().toList();
+	}
 
 	@EventHandler
 	public void on(EntityDamageByEntityEvent event) {

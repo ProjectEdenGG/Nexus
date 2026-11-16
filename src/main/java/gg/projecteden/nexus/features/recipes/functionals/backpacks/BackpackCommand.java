@@ -92,8 +92,10 @@ public class BackpackCommand extends CustomCommand {
 	}
 
 	public static ItemStack fix(ItemStack item) {
-		var tier = BackpackTier.of(item);
+		return fix(item, BackpackTier.of(item));
+	}
 
+	public static ItemStack fix(ItemStack item, BackpackTier tier) {
 		return new ItemBuilder(item)
 			.model(tier.getModel())
 			.nbt(nbt -> {

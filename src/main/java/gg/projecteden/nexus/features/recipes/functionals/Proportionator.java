@@ -51,7 +51,7 @@ public class Proportionator extends FunctionalRecipe {
 	private static final ItemBuilder MOTHERBOARD = new ItemBuilder(PROPORTIONATOR_MOTHERBOARD)
 		.name("&eProportionator Motherboard");
 
-	private static final ItemBuilder FUEL = new ItemBuilder(PROPORTIONATOR_FUEL)
+	public static final ItemBuilder FUEL = new ItemBuilder(PROPORTIONATOR_FUEL)
 		.name("&eProportionator Fuel");
 
 	public Proportionator() {

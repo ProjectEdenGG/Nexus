@@ -104,4 +104,8 @@ public class ColumnQuakeEnchant extends CustomEnchant implements Listener {
 		event.getBlock().getWorld().dropItem(event.getBlock().getLocation().toCenterLocation(), new ItemStack(event.getTo()));
 	}
 
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.SHOVELS.getValues().stream().toList();
+	}
 }

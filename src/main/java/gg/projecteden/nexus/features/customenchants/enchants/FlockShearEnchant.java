@@ -2,9 +2,12 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import io.papermc.paper.entity.Shearable;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerShearEntityEvent;
+
+import java.util.List;
 
 public class FlockShearEnchant extends CustomEnchant implements Listener {
 
@@ -35,5 +38,10 @@ public class FlockShearEnchant extends CustomEnchant implements Listener {
 		for (Shearable nearbyEntity : nearby)
 			if (nearbyEntity.readyToBeSheared())
 				nearbyEntity.shear();
+	}
+
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return List.of(Material.SHEARS);
 	}
 }

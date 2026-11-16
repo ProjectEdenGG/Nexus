@@ -2,10 +2,13 @@ package gg.projecteden.nexus.features.crates.gemcrafter;
 
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -17,8 +20,6 @@ import java.util.concurrent.atomic.AtomicReference;
 @AllArgsConstructor
 public class TomeItem {
 
-	private static final String LEVEL_KEY = "TOME_LEVEL";
-
 	private TomeType type;
 	private TomeLevel level;
 
@@ -26,10 +27,7 @@ public class TomeItem {
 		return new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
 			.maxStackSize(1)
 			.name("&e" + StringUtils.camelCase(type) + " Tome")
-			.lore("&3Level: &e" + StringUtils.camelCase(level))
-			.model(type.getModel())
-			.nbt(nbt -> nbt.setString(LEVEL_KEY, level.name()))
-			.dyeColor(level.getDyeColor())
+			.model(type.getModel(level))
 			.itemFlags(ItemFlag.HIDE_DYE, ItemFlag.HIDE_ATTRIBUTES)
 			.build();
 	}
@@ -37,11 +35,11 @@ public class TomeItem {
 	public static TomeItem of(ItemStack item) {
 		if (Nullables.isNullOrAir(item)) return null;
 
-		TomeType type = TomeType.fromTome(item);
-		if (type == null) return null;
-
 		TomeLevel level = TomeLevel.fromTome(item);
 		if (level == null) return null;
+
+		TomeType type = TomeType.fromTome(item, level);
+		if (type == null) return null;
 
 		return new TomeItem(type, level);
 	}
@@ -65,41 +63,31 @@ public class TomeItem {
 		}
 
 		final Enchantment[] enchantments;
-		final String model = "survival/gem_crafter/tomes/" + name().toLowerCase();
 
-		public static TomeType fromTome(ItemStack tome) {
+		private String getModel(TomeLevel level) {
+			return "survival/gem_crafter/tomes/" + level.name().toLowerCase() + "/" + name().toLowerCase();
+		}
+
+		public static TomeType fromTome(ItemStack tome, TomeLevel level) {
 			String itemModel = new ItemBuilder(tome).model();
 			for (TomeType type : values())
-				if (type.getModel().equalsIgnoreCase(itemModel))
+				if (type.getModel(level).equalsIgnoreCase(itemModel))
 					return type;
 			return null;
 		}
 	}
 
-	@Getter
-	@AllArgsConstructor
 	public enum TomeLevel {
-		NOVICE("#429c00"),
-		APPRENTICE("#3357ff"),
-		ADEPT("#9c0b00"),
-		EXPERT("#a900ff"),
-		MASTER("#ffd83e"),
+		REGULAR,
+		MASTER,
 		;
 
-		private final String dyeColor;
-
 		public static TomeLevel fromTome(ItemStack tome) {
-			AtomicReference<String> level = new AtomicReference<>();
-			new ItemBuilder(tome).nbt(nbt -> {
-				if (nbt.hasTag(LEVEL_KEY))
-					level.set(nbt.getString(LEVEL_KEY));
-			});
-
-			if (level.get() == null)
-				return null;
-
-			try { return valueOf(level.get().toUpperCase()); }
-			catch (IllegalArgumentException ignore) { return null; }
+			String model = Model.of(tome);
+			for (TomeLevel level : values())
+				if (model.contains(level.name().toLowerCase()))
+					return level;
+			return null;
 		}
 	}
 

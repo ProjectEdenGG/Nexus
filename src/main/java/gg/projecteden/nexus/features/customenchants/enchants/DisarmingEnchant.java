@@ -6,13 +6,17 @@ import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.models.pvp.PVP;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import java.util.List;
 
 public class DisarmingEnchant extends CustomEnchant implements Listener {
 
@@ -53,4 +57,8 @@ public class DisarmingEnchant extends CustomEnchant implements Listener {
 		});
 	}
 
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.MELEE_WEAPONS.getValues().stream().toList();
+	}
 }

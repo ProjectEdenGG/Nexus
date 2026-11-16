@@ -4,6 +4,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -12,6 +14,8 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class SpringsEnchant extends CustomEnchant {
 
@@ -23,8 +27,8 @@ public class SpringsEnchant extends CustomEnchant {
 	}
 
 	@Override
-	public @NotNull EnchantmentTarget getItemTarget() {
-		return EnchantmentTarget.ARMOR_FEET;
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.ALL_BOOTS.getValues().stream().toList();
 	}
 
 	@SuppressWarnings("UnstableApiUsage")

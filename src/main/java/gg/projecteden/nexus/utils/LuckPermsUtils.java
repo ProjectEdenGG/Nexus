@@ -5,6 +5,7 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -239,6 +240,7 @@ public class LuckPermsUtils {
 			private final List<String> permissions = new ArrayList<>();
 			private boolean value = true;
 			private World world;
+			private WorldGroup worldGroup;
 
 			public PermissionChangeBuilder player(HasUniqueId player) {
 				this.uuid = player.getUniqueId();
@@ -285,6 +287,11 @@ public class LuckPermsUtils {
 				return this;
 			}
 
+			public PermissionChangeBuilder worldGroup(WorldGroup worldGroup) {
+				this.worldGroup = worldGroup;
+				return this;
+			}
+
 			@NotNull
 			public CompletableFuture<Void> runAsync() {
 				return userManager().modifyUser(uuid, user -> {
@@ -293,6 +300,8 @@ public class LuckPermsUtils {
 
 						if (world != null)
 							node.context(ImmutableContextSet.of("world", world.getName()));
+						if (worldGroup != null)
+							node.context(ImmutableContextSet.of("worldgroup", worldGroup.name().toLowerCase()));
 
 						type.consumer.accept(user.data(), node.build());
 					}

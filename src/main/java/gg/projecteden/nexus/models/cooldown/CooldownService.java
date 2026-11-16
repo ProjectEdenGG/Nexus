@@ -35,12 +35,12 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 		return isOnCooldown(player.getUniqueId(), type, ticks);
 	}
 
-	public static boolean isOnCooldown(UUID uuid, String type, long ticks, String bypassPermission) {
+	public static boolean isOnCooldown(UUID uuid, String type, long ticks, String bypassPermission, boolean createIfTrue) {
 		OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 		if (player.getPlayer() != null && player.getPlayer().hasPermission(bypassPermission))
-			return true;
+			return false;
 
-		return isOnCooldown(uuid, type, ticks);
+		return isOnCooldown(uuid, type, ticks, createIfTrue);
 	}
 
 	public static boolean isOnCooldown(UUID uuid, String type, long ticks) {
@@ -64,7 +64,7 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 	}
 
 	public static boolean isNotOnCooldown(UUID uuid, String type, long ticks, String bypassPermission) {
-		return !isOnCooldown(uuid, type, ticks, bypassPermission);
+		return !isOnCooldown(uuid, type, ticks, bypassPermission, true);
 	}
 
 	public static boolean isNotOnCooldown(UUID uuid, String type, long ticks) {

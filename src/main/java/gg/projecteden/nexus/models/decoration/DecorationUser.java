@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ItemFrame;
 
@@ -41,7 +42,7 @@ public class DecorationUser implements PlayerOwnedObject {
 	}
 
 	public void removeTickable(UUID uuid) {
-		tickableDecorations.remove(new Tickable(uuid, null, null));
+		tickableDecorations.remove(new Tickable(uuid, null, null, null));
 	}
 
 	public void addTickable(ItemFrame itemFrame, String configId) {
@@ -55,11 +56,33 @@ public class DecorationUser implements PlayerOwnedObject {
 		UUID uuid;
 		Location location;
 		String configId;
+		transient ItemFrame itemFrame;
 
 		public Tickable(ItemFrame itemFrame, String configId) {
+			this.itemFrame = itemFrame;
 			this.uuid = itemFrame.getUniqueId();
 			this.location = itemFrame.getLocation();
 			this.configId = configId;
+		}
+
+		public ItemFrame getItemFrame() {
+			if (itemFrame != null) {
+				if (!itemFrame.isValid())
+					itemFrame = null;
+				else if (!location.isWorldLoaded())
+					itemFrame = null;
+				else if (!location.getChunk().isLoaded())
+					itemFrame = null;
+			}
+
+			if (itemFrame != null)
+				return itemFrame;
+
+			org.bukkit.entity.Entity entity = Bukkit.getEntity(uuid);
+			if (entity instanceof ItemFrame)
+				itemFrame = (ItemFrame) entity;
+
+			return itemFrame;
 		}
 
 		@Override

@@ -19,6 +19,8 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
+import java.util.function.BiConsumer;
+
 @Permission("horsepicker.pick")
 @WikiConfig(rank = "Guest", feature = "McMMO Prestige")
 public class HorsePickerCommand extends CustomCommand {
@@ -30,7 +32,8 @@ public class HorsePickerCommand extends CustomCommand {
 	@Path
 	@Description("Open the horse picker menu")
 	void run() {
-		new HorsePickerColorProvider().open(player());
+		new HorsePickerColorProvider((color, marking) -> spawnHorse(player(), color.getHorseColor(), Horse.Style.valueOf(marking.name())))
+			.open(player());
 	}
 
 	@Getter
@@ -73,21 +76,29 @@ public class HorsePickerCommand extends CustomCommand {
 
 	@Title("&3Color Picker")
 	@Rows(3)
-	public class HorsePickerColorProvider extends InventoryProvider {
+	public static class HorsePickerColorProvider extends InventoryProvider {
+
+		private final BiConsumer<HorseColor, HorseMarking> onSelect;
+
+		public HorsePickerColorProvider(BiConsumer<HorseColor, HorseMarking> onSelect) {
+			this.onSelect = onSelect;
+		}
+
 		@Override
 		public void init() {
 			int column = 1;
 			for (HorseColor color : HorseColor.values()) {
-				contents.set(1, column++, ClickableItem.of(color.getMaterial(), color.getColor() + camelCase(color.getName()), e ->
-					new HorsePickerMarkingsProvider(color).open(viewer)));
+				contents.set(1, column++, ClickableItem.of(color.getMaterial(), color.getColor() + StringUtils.camelCase(color.getName()), e ->
+					new HorsePickerMarkingsProvider(color, onSelect).open(viewer)));
 			}
 		}
 	}
 
 	@Rows(3)
 	@AllArgsConstructor
-	public class HorsePickerMarkingsProvider extends InventoryProvider {
+	public static class HorsePickerMarkingsProvider extends InventoryProvider {
 		private final HorseColor color;
+		private BiConsumer<HorseColor, HorseMarking> onSelect;
 
 		@Override
 		public String getTitle() {
@@ -99,7 +110,7 @@ public class HorsePickerCommand extends CustomCommand {
 			int column = 2;
 			for (HorseMarking marking : HorseMarking.values()) {
 				contents.set(1, column++, ClickableItem.of(marking.getMaterial(), marking.getName(), e -> {
-					spawnHorse(viewer, color.getHorseColor(), Horse.Style.valueOf(marking.name()));
+					onSelect.accept(color, marking);
 					LuckPermsUtils.PermissionChange.unset().permissions("horsepicker.pick").player(viewer).runAsync();
 					viewer.closeInventory();
 				}));

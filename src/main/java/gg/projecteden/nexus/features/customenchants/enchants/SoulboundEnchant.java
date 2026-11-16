@@ -2,7 +2,9 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -11,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class SoulboundEnchant extends CustomEnchant implements Listener {
 	public static final String NBT_KEY = "soulbound";
@@ -65,5 +68,10 @@ public class SoulboundEnchant extends CustomEnchant implements Listener {
 	@Override
 	public int getMaxLevel() {
 		return 1;
+	}
+
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.TOOLS_WEAPONS_ARMOR.exclude(Material.LEAD).exclude(MaterialTag.ARROWS).getValues().stream().toList();
 	}
 }

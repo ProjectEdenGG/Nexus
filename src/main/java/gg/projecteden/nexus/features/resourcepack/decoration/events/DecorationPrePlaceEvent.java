@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
 public class DecorationPrePlaceEvent extends DecorationEvent {
@@ -19,15 +20,18 @@ public class DecorationPrePlaceEvent extends DecorationEvent {
 	@Getter
 	@Setter
 	private ItemFrameRotation rotation;
+	@Getter
+	private final Location location;
 
-	public DecorationPrePlaceEvent(Player player, Decoration decoration, ItemStack item, BlockFace attachedFace, ItemFrameRotation rotation) {
+	public DecorationPrePlaceEvent(Player player, Decoration decoration, ItemStack item, Location location, BlockFace attachedFace, ItemFrameRotation rotation) {
 		super(player, decoration);
 		this.item = item;
 		this.attachedFace = attachedFace;
 		this.rotation = rotation;
+		this.location = location;
 	}
 
-	public Location getLocation() {
-		return decoration.getItemFrame().getLocation();
+	public static HandlerList getHandlerList() {
+		return handlerList;
 	}
 }

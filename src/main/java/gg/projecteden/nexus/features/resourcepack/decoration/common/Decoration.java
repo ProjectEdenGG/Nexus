@@ -90,6 +90,10 @@ public class Decoration {
 		return type.getConfig().getId().equals(config.getId());
 	}
 
+	public boolean is(DecorationConfig config) {
+		return config.getId().equals(this.config.getId());
+	}
+
 	private boolean isValidFrame() {
 		return itemFrame != null && itemFrame.isValid();
 	}
@@ -352,7 +356,7 @@ public class Decoration {
 
 		DecorationLang.debug(player, "frameRotation = " + frameRotation.name());
 
-		DecorationPrePlaceEvent prePlaceEvent = new DecorationPrePlaceEvent(player, decoration, item, clickedFace, frameRotation);
+		DecorationPrePlaceEvent prePlaceEvent = new DecorationPrePlaceEvent(player, decoration, item, origin, clickedFace, frameRotation);
 		if (!prePlaceEvent.callEvent()) {
 			DecorationLang.debug(player, "&6DecorationPrePlaceEvent was cancelled");
 			return false;

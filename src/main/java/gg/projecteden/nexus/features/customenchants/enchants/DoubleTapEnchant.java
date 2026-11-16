@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.EnchantUtils;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
-import gg.projecteden.nexus.features.mcmmo.resetnew.skills.archery.Quiver;
+import gg.projecteden.nexus.features.mcmmo.mastery.skills.archery.Quiver;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;

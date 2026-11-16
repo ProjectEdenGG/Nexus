@@ -3,21 +3,18 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.listeners.KillerMoney.KillerMoneyEarnedEvent;
 import gg.projecteden.nexus.utils.Enchant;
-import org.bukkit.enchantments.EnchantmentTarget;
+import gg.projecteden.nexus.utils.MaterialTag;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class BountyEnchant extends CustomEnchant implements Listener {
 
 	@Override
 	public int getMaxLevel() {
 		return 5;
-	}
-
-	@Override
-	public @NotNull EnchantmentTarget getItemTarget() {
-		return EnchantmentTarget.WEAPON;
 	}
 
 	@EventHandler
@@ -31,4 +28,8 @@ public class BountyEnchant extends CustomEnchant implements Listener {
 		event.setMoney(event.getMoney() * multiplier);
 	}
 
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.WEAPONS.append(MaterialTag.AXES).exclude(MaterialTag.ARROWS).getValues().stream().toList();
+	}
 }

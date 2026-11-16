@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.utils.ArrowSnapshot;
+import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -9,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
@@ -24,6 +26,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -52,6 +55,11 @@ public class BarrageEnchant extends CustomEnchant implements Listener {
 	@Override
 	public List<Material> getSupportedMaterials() {
 		return List.of(Material.BOW);
+	}
+
+	@Override
+	public boolean conflictsWith(@NonNull Enchantment enchantment) {
+		return enchantment == Enchant.OVERCHARGE;
 	}
 
 	public BarrageEnchant() {

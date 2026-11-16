@@ -235,6 +235,11 @@ public enum ArmorSkin implements EquipmentSkinType {
 		return null;
 	}
 
+	@Override
+	public boolean isInternal() {
+		return !getTemplateable().contains(this);
+	}
+
 	@SneakyThrows
 	public Field getField() {
 		return getClass().getField(name());

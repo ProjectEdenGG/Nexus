@@ -13,6 +13,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.meta.Damageable;
 
+import java.util.List;
+
 import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
@@ -83,4 +85,8 @@ public class PloughEnchant extends CustomEnchant implements Listener {
 		tool.setItemMeta(durability);
 	}
 
+	@Override
+	public List<Material> getSupportedMaterials() {
+		return MaterialTag.HOES.getValues().stream().toList();
+	}
 }
